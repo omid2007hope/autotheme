@@ -13,8 +13,9 @@
       "require": "./dist/index.cjs"
     },
     "./react": {
-      "types": "./dist/react.d.ts",
-      "import": "./dist/react.js"
+      "types": "./dist/react/useAutoTheme.d.ts",
+      "import": "./dist/react/useAutoTheme.js",
+      "require": "./dist/react/useAutoTheme.cjs"
     }
   },
   "files": [
