@@ -1,5 +1,5 @@
 {
-  "name": "autotheme-js",
+  "name": "@omid2007hope/autotheme",
   "version": "1.0.0",
   "description": "Self-driving CSS. Zero-dependency time, date, and seasonal UI theming.",
   "type": "module",

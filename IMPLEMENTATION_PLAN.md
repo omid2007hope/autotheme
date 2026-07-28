@@ -38,7 +38,7 @@ Every developer who wants time-based UI changes (dark mode at night, seasonal th
 One function: `auto()`. Pass an array of rules. Get back the matching style. Done.
 
 ```js
-import { auto } from "autotheme-js";
+import { auto } from "@omid2007hope/autotheme";
 
 <div className={auto([
   { time: 6,  style: "bg-white" },
@@ -408,7 +408,7 @@ Defines:
 
 ```json
 {
-  "name": "autotheme-js",
+  "name": "@omid2007hope/autotheme",
   "version": "1.0.0",
   "description": "Self-driving CSS. Zero-dependency time, date, and seasonal UI theming.",
   "main": "./dist/index.cjs",
@@ -433,7 +433,7 @@ Defines:
   },
   "keywords": [
     "css", "tailwind", "bootstrap", "theme", "dark-mode",
-    "time-aware", "zero-dependency", "autotheme-js", "react",
+    "time-aware", "zero-dependency", "@omid2007hope/autotheme", "react",
     "seasonal", "live-theme", "auto-theme", "theming"
   ],
   "author": "Omid Teimory",
@@ -584,7 +584,7 @@ mock.method(global, 'Date', function() {
 | Write CI/CD workflow | `.github/workflows/publish.yml` |
 | Publish to NPM | `npm publish` |
 
-**Exit Criteria:** Package is live on NPM. `npm i autotheme-js` installs < 1KB.
+**Exit Criteria:** Package is live on NPM. `npm i @omid2007hope/autotheme` installs < 1KB.
 
 ---
 
@@ -608,4 +608,4 @@ Before running `npm publish`:
 
 ---
 
-*This document is the single source of truth for autotheme-js's implementation. Every decision, every file, every function is here. Build exactly this.*
+*This document is the single source of truth for @omid2007hope/autotheme's implementation. Every decision, every file, every function is here. Build exactly this.*
