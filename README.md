@@ -2,7 +2,7 @@
   <img src="https://img.shields.io/badge/ZERO-DEPENDENCIES-000000?style=for-the-badge&labelColor=000000&color=00ffcc" alt="Zero Dependencies" />
   <img src="https://img.shields.io/badge/<1KB-GZIPPED-000000?style=for-the-badge&labelColor=000000&color=00ffcc" alt="<1KB Gzipped" />
   <img src="https://img.shields.io/badge/100%25-TEST%20COVERAGE-000000?style=for-the-badge&labelColor=000000&color=00ffcc" alt="100% Test Coverage" />
-  <img src="https://img.shields.io/npm/l/autotheme?style=for-the-badge&labelColor=000000&color=00ffcc" alt="License" />
+  <img src="https://img.shields.io/npm/l/autotheme-js?style=for-the-badge&labelColor=000000&color=00ffcc" alt="License" />
 </p>
 
 <h1 align="center">AutoTheme</h1>
@@ -20,13 +20,13 @@
 ## Install
 
 ```bash
-npm i autotheme
+npm i autotheme-js
 ```
 
 ## The 5-Second Example
 
 ```jsx
-import { auto } from "autotheme";
+import { auto } from "autotheme-js";
 
 const morning = { time: 6,  style: "bg-amber-100 text-black" };
 const evening = { time: 18, style: "bg-zinc-900 text-white" };
@@ -91,7 +91,7 @@ Exact Date  →  Date Range (since/until)  →  Time of Day  →  Fallback
 ### Tailwind CSS
 
 ```jsx
-import { auto } from "autotheme";
+import { auto } from "autotheme-js";
 
 const rules = [
   { time: 0,  style: "bg-slate-950 text-slate-100" },  // Midnight
@@ -106,7 +106,7 @@ const rules = [
 ### Standard CSS (Inline Styles)
 
 ```jsx
-import { auto } from "autotheme";
+import { auto } from "autotheme-js";
 
 const rules = [
   { time: 6,  style: { backgroundColor: "#fffbeb", color: "#78350f" } },
@@ -119,7 +119,7 @@ const rules = [
 ### Bootstrap
 
 ```jsx
-import { auto } from "autotheme";
+import { auto } from "autotheme-js";
 
 const rules = [
   { time: 6,  style: "bg-light text-dark" },
@@ -132,7 +132,7 @@ const rules = [
 ### CSS Custom Properties (Variables)
 
 ```js
-import { autoVars } from "autotheme";
+import { autoVars } from "autotheme-js";
 
 autoVars([
   { time: 6,  vars: { "--bg": "#fffbeb", "--text": "#78350f", "--radius": "8px" } },
@@ -145,7 +145,7 @@ This injects variables directly into `:root`, letting your existing CSS cascade 
 ### Date & Seasonal Overrides
 
 ```jsx
-import { auto } from "autotheme";
+import { auto } from "autotheme-js";
 
 const rules = [
   // Halloween — takes priority on Oct 31
@@ -182,7 +182,7 @@ const rules = [
 If the user leaves the tab open and the clock crosses a time boundary, the `auto()` function alone won't re-render. For **live, automatic re-renders**, use the React hook:
 
 ```jsx
-import { useAutoTheme } from "autotheme/react";
+import { useAutoTheme } from "autotheme-js/react";
 
 const rules = [
   { time: 6,  style: "bg-white text-black" },
@@ -215,7 +215,7 @@ No React? No problem. Use the DOM observer directly:
 
 ```html
 <script type="module">
-  import { observe } from "autotheme";
+  import { observe } from "autotheme-js";
 
   observe({
     target: document.documentElement,

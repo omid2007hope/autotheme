@@ -101,7 +101,7 @@ This roadmap covers the full lifecycle of AutoTheme from **V1** (launch) through
 
 | Action | Platform |
 |---|---|
-| Write tutorial: *"Time-Aware Styling in Next.js 14 with AutoTheme"* | Dev.to / Medium |
+| Write tutorial: *"Time-Aware Styling in Next.js 14 with autotheme-js"* | Dev.to / Medium |
 | Write tutorial: *"Seasonal CSS Without JavaScript State"* | Dev.to / Medium |
 | Create YouTube short / TikTok dev video | Social media |
 
@@ -135,7 +135,7 @@ This roadmap covers the full lifecycle of AutoTheme from **V1** (launch) through
 - [ ] **Easing presets** — Built-in transition curves for theme changes
 
 #### Theme Presets
-- [ ] **Built-in seasonal presets** — `import { presets } from 'autotheme'` — winter, summer, autumn, spring with pre-designed Tailwind class sets
+- [ ] **Built-in seasonal presets** — `import { presets } from 'autotheme-js'` — winter, summer, autumn, spring with pre-designed Tailwind class sets
 - [ ] **Dark/Light auto-toggle** — One-line setup: `auto.darkLight()` — switches at 6 AM / 6 PM
 - [ ] **Holiday pack** — Pre-built rules for major holidays (Christmas, Halloween, New Year, Valentine's, etc.)
 
@@ -237,7 +237,7 @@ The entire popularity strategy follows one principle: **reduce friction at every
                                  ▼
                    ┌──────────────────────────┐
                    │                          │
-                   │  npm i autotheme         │
+                   │  npm i autotheme-js         │
                    │  (< 1KB, 0 deps)         │
                    │  installs in 0.2 seconds │
                    │                          │
