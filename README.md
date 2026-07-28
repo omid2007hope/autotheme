@@ -2,7 +2,7 @@
   <img src="https://img.shields.io/badge/ZERO-DEPENDENCIES-000000?style=for-the-badge&labelColor=000000&color=00ffcc" alt="Zero Dependencies" />
   <img src="https://img.shields.io/badge/<1KB-GZIPPED-000000?style=for-the-badge&labelColor=000000&color=00ffcc" alt="<1KB Gzipped" />
   <img src="https://img.shields.io/badge/100%25-TEST%20COVERAGE-000000?style=for-the-badge&labelColor=000000&color=00ffcc" alt="100% Test Coverage" />
-  <img src="https://img.shields.io/npm/l/@omid2007hope/autotheme?style=for-the-badge&labelColor=000000&color=00ffcc" alt="License" />
+  <img src="https://img.shields.io/badge/LICENSE-CUSTOM-000000?style=for-the-badge&labelColor=000000&color=00ffcc" alt="License" />
 </p>
 
 <h1 align="center">AutoTheme</h1>
