@@ -1,0 +1,9 @@
+src/
+tests/
+examples/
+.github/
+.gitignore
+tsconfig.json
+IMPLEMENTATION_PLAN.md
+ROADMAP.md
+ReadME

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AutoTheme — CSS Variables Demo</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #000000;
+      --accent: #3b82f6;
+      --radius: 8px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: system-ui, -apple-system, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      transition: background-color 0.5s ease, color 0.5s ease;
+    }
+    .card {
+      max-width: 480px;
+      padding: 2rem;
+      border: 1px solid color-mix(in srgb, var(--text) 15%, transparent);
+      border-radius: var(--radius);
+      text-align: center;
+    }
+    .card h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .card p  { opacity: 0.75; margin-bottom: 1rem; }
+    .badge {
+      display: inline-block;
+      font-family: monospace;
+      font-size: 0.85rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 4px;
+      background-color: var(--accent);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>AutoTheme</h1>
+    <p>This page uses CSS custom properties that shift with the clock.</p>
+    <span class="badge" id="label">Loading…</span>
+  </div>
+
+  <script type="module">
+    import { autoVars } from '../../src/adapters/css-vars.js';
+
+    const rules = [
+      { time: 0,  vars: { '--bg': '#0f172a', '--text': '#e2e8f0', '--accent': '#818cf8', '--radius': '12px' } },
+      { time: 6,  vars: { '--bg': '#fffbeb', '--text': '#78350f', '--accent': '#f59e0b', '--radius': '8px' } },
+      { time: 12, vars: { '--bg': '#f0f9ff', '--text': '#0c4a6e', '--accent': '#0ea5e9', '--radius': '8px' } },
+      { time: 18, vars: { '--bg': '#1e1b4b', '--text': '#c7d2fe', '--accent': '#6366f1', '--radius': '16px' } },
+    ];
+
+    autoVars(rules);
+
+    const hour = new Date().getHours();
+    document.getElementById('label').textContent = `Hour: ${hour} — vars injected`;
+
+    // Re-evaluate every 60 seconds
+    setInterval(() => autoVars(rules), 60000);
+  </script>
+</body>
+</html>

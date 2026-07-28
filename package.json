@@ -1,0 +1,57 @@
+{
+  "name": "autotheme",
+  "version": "1.0.0",
+  "description": "Self-driving CSS. Zero-dependency time, date, and seasonal UI theming.",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.js src/react/useAutoTheme.js --format cjs,esm --dts --clean",
+    "test": "node --test tests/*.test.js",
+    "prepublishOnly": "npm run test && npm run build"
+  },
+  "keywords": [
+    "css",
+    "tailwind",
+    "bootstrap",
+    "theme",
+    "dark-mode",
+    "time-aware",
+    "zero-dependency",
+    "autotheme",
+    "react",
+    "seasonal",
+    "live-theme",
+    "auto-theme",
+    "theming"
+  ],
+  "author": "Omid Teimory",
+  "license": "SEE LICENSE IN License",
+  "peerDependencies": {
+    "react": ">=16.8.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  }
+}

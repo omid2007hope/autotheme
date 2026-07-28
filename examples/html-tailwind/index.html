@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AutoTheme — Tailwind CSS Demo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { transition: background-color 0.5s ease, color 0.5s ease; }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center">
+  <div id="app" class="text-center space-y-6 max-w-lg mx-auto p-8">
+    <h1 class="text-4xl font-bold tracking-tight">AutoTheme</h1>
+    <p class="text-lg opacity-80">Self-driving CSS. This page shifts based on your local time.</p>
+    <div id="current-theme" class="text-sm font-mono bg-black/10 rounded-lg px-4 py-2 inline-block"></div>
+    <p class="text-xs opacity-50">Check back at different hours to see it change.</p>
+  </div>
+
+  <script type="module">
+    // Import directly from source for demo purposes.
+    // In production: import { auto, observe } from 'autotheme';
+    import { auto } from '../../src/core/engine.js';
+    import { observe } from '../../src/core/observer.js';
+
+    const rules = [
+      { time: 0,  style: 'bg-slate-950 text-slate-100' },   // Midnight
+      { time: 5,  style: 'bg-orange-100 text-orange-900' },  // Dawn
+      { time: 8,  style: 'bg-amber-50 text-amber-900' },     // Morning
+      { time: 12, style: 'bg-sky-50 text-sky-900' },          // Noon
+      { time: 16, style: 'bg-amber-100 text-amber-800' },    // Afternoon
+      { time: 18, style: 'bg-indigo-950 text-indigo-100' },   // Dusk
+      { time: 21, style: 'bg-gray-950 text-gray-100' },       // Night
+    ];
+
+    // Show the current theme name
+    const label = document.getElementById('current-theme');
+    const hour = new Date().getHours();
+    const currentStyle = auto(rules, 'bg-white text-black');
+    label.textContent = `Active: "${currentStyle}" (${hour}:00 local)`;
+
+    // Start live observer on <body>
+    observe({
+      target: document.body,
+      rules,
+      fallback: 'bg-white text-black',
+      interval: 60000,
+    });
+  </script>
+</body>
+</html>
