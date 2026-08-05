@@ -18,7 +18,7 @@ Through a granular line-by-line code audit, several critical issues and edge cas
 Rules are evaluated in isolated priority blocks. If a rule specifies both `{ date: '10-31', time: 18 }`, the engine matches the date and immediately returns, ignoring the time condition.
 _Fix:_ The engine must evaluate all conditions on a single rule as a logical `AND`.
 
-- **Date Range Year Ignored (`utils.js`)**:
+[x] **Date Range Year Ignored (`utils.js`)**:
   `isInDateRange` extracts the month and day (`month * 100 + day`) but completely discards the year from `since` and `until`. Passing `"2024-01-01"` acts identically to `"2025-01-01"`.
   _Fix:_ Account for `year` properties if provided, falling back to annual recurrence only when the year is absent.
 
