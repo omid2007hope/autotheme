@@ -28,10 +28,10 @@ _Fix:_ Account for `year` properties if provided, falling back to annual recurre
 When transitioning from inline styles (object) to class-based styles (string), `previousStyle` is passed as an object. `previousClasses.split(/\s+/)` throws a `TypeError`.
 _Fix:_ Add validation: `typeof previousClasses === 'string'` before splitting.
 
-- **React Hook Infinite Loop Trap (`useAutoTheme.js`)**:
+[x] **React Hook Infinite Loop Trap (`useAutoTheme.js`)**:
   Passing an inline array (`useAutoTheme([{ time: 6, ... }])`) creates a new reference every render. The `useCallback` triggers the `useEffect`, re-evaluating the style and potentially causing infinite render loops if the returned style is an inline object.
   _Fix:_ Implement `useDeepCompareMemoize` or a deep equality check for the `rules` array.
-- **Function State Initializer Bug (`useAutoTheme.js`)**:
+[x] **Function State Initializer Bug (`useAutoTheme.js`)**:
   Currently using `useState(evaluate)`. If `evaluate` ever returns a function (e.g., a style function payload), React interprets it as an updater function.
   _Fix:_ Change to `useState(() => evaluate())`.
 

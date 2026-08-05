@@ -6,7 +6,7 @@
  * @module react/useAutoTheme
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { auto } from '../core/engine.js';
 
 /**
@@ -34,15 +34,32 @@ import { auto } from '../core/engine.js';
 export function useAutoTheme(rules, fallback = '', options = {}) {
   const { interval = 60000 } = options;
 
-  const evaluate = useCallback(() => auto(rules, fallback), [rules, fallback]);
+  // Deep compare memoize to prevent infinite loops when inline arrays are passed
+  const rulesRef = useRef(rules);
+  if (JSON.stringify(rules) !== JSON.stringify(rulesRef.current)) {
+    rulesRef.current = rules;
+  }
+  const memoizedRules = rulesRef.current;
 
-  const [style, setStyle] = useState(evaluate);
+  const fallbackRef = useRef(fallback);
+  if (JSON.stringify(fallback) !== JSON.stringify(fallbackRef.current)) {
+    fallbackRef.current = fallback;
+  }
+  const memoizedFallback = fallbackRef.current;
+
+  const evaluate = useCallback(
+    () => auto(memoizedRules, memoizedFallback),
+    [memoizedRules, memoizedFallback]
+  );
+
+  // Use a callback initializer so if `evaluate()` returns a function, React doesn't execute it
+  const [style, setStyle] = useState(() => evaluate());
 
   useEffect(() => {
-    // Re-evaluate immediately in case rules/fallback changed
-    setStyle(evaluate());
+    // Wrap evaluate() in a callback so if the payload is a function, React stores it directly
+    setStyle(() => evaluate());
 
-    const tick = () => setStyle(evaluate());
+    const tick = () => setStyle(() => evaluate());
     const id = setInterval(tick, interval);
 
     const onVisibility = () => {
