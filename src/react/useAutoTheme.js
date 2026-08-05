@@ -60,7 +60,14 @@ export function useAutoTheme(rules, fallback = '', options = {}) {
     setStyle(() => evaluate());
 
     const tick = () => setStyle(() => evaluate());
-    const id = setInterval(tick, interval);
+    
+    // Sync to the next boundary to prevent timer drift
+    let intervalId;
+    const msUntilNext = interval - (Date.now() % interval);
+    const timeoutId = setTimeout(() => {
+      tick();
+      intervalId = setInterval(tick, interval);
+    }, msUntilNext);
 
     const onVisibility = () => {
       if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
@@ -73,7 +80,8 @@ export function useAutoTheme(rules, fallback = '', options = {}) {
     }
 
     return () => {
-      clearInterval(id);
+      clearTimeout(timeoutId);
+      if (intervalId) clearInterval(intervalId);
       if (typeof document !== 'undefined') {
         document.removeEventListener('visibilitychange', onVisibility);
       }

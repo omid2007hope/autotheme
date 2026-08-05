@@ -37,7 +37,7 @@ _Fix:_ Add validation: `typeof previousClasses === 'string'` before splitting.
 
 ### 3. Architecture & Performance Bottlenecks
 
-- **Timer Drift (`useAutoTheme.js` & `observer.js`)**:
+[x] **Timer Drift (`useAutoTheme.js` & `observer.js`)**:
   `setInterval` fires exactly `interval` ms after execution, not at the top of the minute. If a user loads the page at 17:59:45 with a 60s interval, the 18:00 rule won't trigger until 18:00:45.
   _Fix:_ Sync the first tick using `setTimeout` for the remaining milliseconds until the next minute boundary, then start the `setInterval`.
 - **Garbage Collection & Sorting Overhead**:

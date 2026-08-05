@@ -86,8 +86,13 @@ export function observe(config) {
   // Initial evaluation
   tick();
 
-  // Start the interval
-  const intervalId = setInterval(tick, interval);
+  // Sync to the next boundary to prevent timer drift
+  let intervalId;
+  const msUntilNext = interval - (Date.now() % interval);
+  const timeoutId = setTimeout(() => {
+    tick();
+    intervalId = setInterval(tick, interval);
+  }, msUntilNext);
 
   // Re-evaluate when the user returns to the tab
   const onVisibility = () => {
@@ -99,7 +104,8 @@ export function observe(config) {
 
   return {
     stop() {
-      clearInterval(intervalId);
+      clearTimeout(timeoutId);
+      if (intervalId) clearInterval(intervalId);
       document.removeEventListener('visibilitychange', onVisibility);
     },
   };
