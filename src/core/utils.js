@@ -10,7 +10,7 @@
  * @returns {boolean}
  */
 export function isSsr() {
-  return typeof window === 'undefined';
+  return typeof window === "undefined";
 }
 
 /**
@@ -21,7 +21,7 @@ export function isSsr() {
  * @returns {{ month: number, day: number, year?: number }} Parsed components (month is 1-based)
  */
 export function parseDate(str) {
-  const parts = str.split('-');
+  const parts = str.split("-");
 
   if (parts.length === 3) {
     return {
@@ -50,7 +50,11 @@ export function isExactDateMatch(rule, now) {
   const day = now.getDate();
 
   if (parsed.year != null) {
-    return parsed.year === now.getFullYear() && parsed.month === month && parsed.day === day;
+    return (
+      parsed.year === now.getFullYear() &&
+      parsed.month === month &&
+      parsed.day === day
+    );
   }
 
   return parsed.month === month && parsed.day === day;
@@ -67,9 +71,20 @@ export function isExactDateMatch(rule, now) {
 export function isInDateRange(rule, now) {
   const since = parseDate(rule.since);
   const until = parseDate(rule.until);
+  const year = now.getFullYear();
   const month = now.getMonth() + 1;
   const day = now.getDate();
 
+  // If both rules have a year, do an absolute range check (YYYYMMDD)
+  if (since.year != null && until.year != null) {
+    const todayVal = year * 10000 + month * 100 + day;
+    const sinceVal = since.year * 10000 + since.month * 100 + since.day;
+    const untilVal = until.year * 10000 + until.month * 100 + until.day;
+
+    return todayVal >= sinceVal && todayVal <= untilVal;
+  }
+
+  // Otherwise, fallback to annual recurrence (MMDD)
   const todayVal = month * 100 + day;
   const sinceVal = since.month * 100 + since.day;
   const untilVal = until.month * 100 + until.day;
