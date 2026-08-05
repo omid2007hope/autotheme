@@ -1,6 +1,6 @@
 {
   "name": "@omid2007hope/autotheme",
-  "version": "1.0.1",
+  "version": "1.5.0",
   "description": "Self-driving CSS. Zero-dependency time, date, and seasonal UI theming.",
   "type": "module",
   "main": "./dist/index.cjs",
