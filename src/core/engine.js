@@ -116,32 +116,45 @@ export function auto(rules, fallback = "", _now) {
     }
   }
 
-  // Priority 1: One-off exact date (YYYY-MM-DD)
-  for (const rule of exactOneOff) {
-    if (isExactDateMatch(rule, now)) {
-      return rule.style;
+  const hour = now.getHours();
+
+  // Helper to evaluate time conditions for rules that matched a date condition
+  const evaluateTimeMatches = (matchedRules) => {
+    if (matchedRules.length === 0) return null;
+
+    // If any rule has a time condition, we must evaluate them together
+    const hasTimeRule = matchedRules.some((r) => r.time != null);
+    if (hasTimeRule) {
+      // Treat rules without a time condition as active from midnight (time: 0)
+      const normalizedTimeRules = matchedRules.map((r) =>
+        r.time != null ? r : { ...r, time: 0 }
+      );
+      const bestMatch = getMatchingTimeRule(normalizedTimeRules, hour);
+      return bestMatch ? bestMatch.style : null;
     }
-  }
+
+    return matchedRules[0].style;
+  };
+
+  // Priority 1: One-off exact date (YYYY-MM-DD)
+  const matchedOneOffs = exactOneOff.filter((r) => isExactDateMatch(r, now));
+  const oneOffStyle = evaluateTimeMatches(matchedOneOffs);
+  if (oneOffStyle) return oneOffStyle;
 
   // Priority 2: Recurring exact date (MM-DD)
-  for (const rule of exactRecurring) {
-    if (isExactDateMatch(rule, now)) {
-      return rule.style;
-    }
-  }
+  const matchedRecurring = exactRecurring.filter((r) => isExactDateMatch(r, now));
+  const recurringStyle = evaluateTimeMatches(matchedRecurring);
+  if (recurringStyle) return recurringStyle;
 
   // Priority 3: Date ranges (since/until)
-  for (const rule of dateRanges) {
-    if (isInDateRange(rule, now)) {
-      return rule.style;
-    }
-  }
+  const matchedRanges = dateRanges.filter((r) => isInDateRange(r, now));
+  const rangeStyle = evaluateTimeMatches(matchedRanges);
+  if (rangeStyle) return rangeStyle;
 
   // Priority 4: Time-of-day
-  const hour = now.getHours();
-  const matched = getMatchingTimeRule(timeRules, hour);
-  if (matched) {
-    return matched.style;
+  const matchedTime = getMatchingTimeRule(timeRules, hour);
+  if (matchedTime) {
+    return matchedTime.style;
   }
 
   // Priority 5: Fallback

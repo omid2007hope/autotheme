@@ -5,7 +5,7 @@
  * @module adapters/css-vars
  */
 
-import { isSsr, isInDateRange } from '../core/utils.js';
+import { isSsr, isInDateRange, isExactDateMatch, getMatchingTimeRule } from '../core/utils.js';
 
 /**
  * @typedef {object} AutoVarRule
@@ -36,49 +36,50 @@ export function autoVars(rules, target) {
   const el = target || document.documentElement;
   const now = new Date();
   const hour = now.getHours();
-  const month = now.getMonth() + 1;
-  const day = now.getDate();
+  const exactOneOff = [];
+  const exactRecurring = [];
+  const dateRanges = [];
+  const timeRules = [];
 
-  let matched = null;
-
-  // Priority 1: Exact date matches
   for (const rule of rules) {
     if (rule.date != null) {
-      const parts = rule.date.split('-');
-      const rMonth = parseInt(parts.length === 3 ? parts[1] : parts[0], 10);
-      const rDay = parseInt(parts.length === 3 ? parts[2] : parts[1], 10);
-      if (rMonth === month && rDay === day) {
-        matched = rule;
-        break;
+      const parts = rule.date.split("-");
+      if (parts.length === 3) {
+        exactOneOff.push(rule);
+      } else {
+        exactRecurring.push(rule);
       }
+    } else if (rule.since != null && rule.until != null) {
+      dateRanges.push(rule);
+    } else if (rule.time != null) {
+      timeRules.push(rule);
     }
   }
 
-  // Priority 2: Date range matches
-  if (!matched) {
-    for (const rule of rules) {
-      if (rule.since != null && rule.until != null) {
-        if (isInDateRange(rule, now)) {
-          matched = rule;
-          break;
-        }
-      }
+  const evaluateTimeMatches = (matchedRules) => {
+    if (matchedRules.length === 0) return null;
+    const hasTimeRule = matchedRules.some((r) => r.time != null);
+    if (hasTimeRule) {
+      const normalizedTimeRules = matchedRules.map((r) =>
+        r.time != null ? r : { ...r, time: 0 }
+      );
+      return getMatchingTimeRule(normalizedTimeRules, hour);
     }
+    return matchedRules[0];
+  };
+
+  let matched = evaluateTimeMatches(exactOneOff.filter(r => isExactDateMatch(r, now)));
+
+  if (!matched) {
+    matched = evaluateTimeMatches(exactRecurring.filter(r => isExactDateMatch(r, now)));
   }
 
-  // Priority 3: Time-of-day
   if (!matched) {
-    const timeRules = rules.filter(r => r.time != null);
-    const sorted = [...timeRules].sort((a, b) => b.time - a.time);
-    for (const rule of sorted) {
-      if (hour >= rule.time) {
-        matched = rule;
-        break;
-      }
-    }
-    if (!matched && sorted.length > 0) {
-      matched = sorted[0];
-    }
+    matched = evaluateTimeMatches(dateRanges.filter(r => isInDateRange(r, now)));
+  }
+
+  if (!matched) {
+    matched = getMatchingTimeRule(timeRules, hour);
   }
 
   if (!matched || !matched.vars) return;
