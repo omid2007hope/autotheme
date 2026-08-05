@@ -19,14 +19,15 @@ Rules are evaluated in isolated priority blocks. If a rule specifies both `{ dat
 _Fix:_ The engine must evaluate all conditions on a single rule as a logical `AND`.
 
 [x] **Date Range Year Ignored (`utils.js`)**:
-  `isInDateRange` extracts the month and day (`month * 100 + day`) but completely discards the year from `since` and `until`. Passing `"2024-01-01"` acts identically to `"2025-01-01"`.
-  _Fix:_ Account for `year` properties if provided, falling back to annual recurrence only when the year is absent.
+`isInDateRange` extracts the month and day (`month * 100 + day`) but completely discards the year from `since` and `until`. Passing `"2024-01-01"` acts identically to `"2025-01-01"`.
+_Fix:_ Account for `year` properties if provided, falling back to annual recurrence only when the year is absent.
 
 ### 2. React & DOM Adapter Crashes
 
-- **String Split Crash in `applyClasses` (`dom.js`)**:
-  When transitioning from inline styles (object) to class-based styles (string), `previousStyle` is passed as an object. `previousClasses.split(/\s+/)` throws a `TypeError`.
-  _Fix:_ Add validation: `typeof previousClasses === 'string'` before splitting.
+[x] **String Split Crash in `applyClasses` (`dom.js`)**:
+When transitioning from inline styles (object) to class-based styles (string), `previousStyle` is passed as an object. `previousClasses.split(/\s+/)` throws a `TypeError`.
+_Fix:_ Add validation: `typeof previousClasses === 'string'` before splitting.
+
 - **React Hook Infinite Loop Trap (`useAutoTheme.js`)**:
   Passing an inline array (`useAutoTheme([{ time: 6, ... }])`) creates a new reference every render. The `useCallback` triggers the `useEffect`, re-evaluating the style and potentially causing infinite render loops if the returned style is an inline object.
   _Fix:_ Implement `useDeepCompareMemoize` or a deep equality check for the `rules` array.
