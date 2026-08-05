@@ -15,14 +15,16 @@
  * @param {string} nextClasses - Space-separated class string to add
  */
 export function applyClasses(el, previousClasses, nextClasses) {
-  if (previousClasses) {
+  // Only process if it's an actual string (ignores inline style objects)
+  if (previousClasses && typeof previousClasses === 'string') {
     const toRemove = previousClasses.split(/\s+/).filter(Boolean);
     if (toRemove.length > 0) {
       el.classList.remove(...toRemove);
     }
   }
 
-  if (nextClasses) {
+  // Only process if it's an actual string
+  if (nextClasses && typeof nextClasses === 'string') {
     const toAdd = nextClasses.split(/\s+/).filter(Boolean);
     if (toAdd.length > 0) {
       el.classList.add(...toAdd);
