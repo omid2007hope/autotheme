@@ -6,7 +6,12 @@
  * @module core/engine
  */
 
-import { isExactDateMatch, isInDateRange, getMatchingTimeRule, isSsr } from './utils.js';
+import {
+  isExactDateMatch,
+  isInDateRange,
+  getMatchingTimeRule,
+  isSsr,
+} from "./utils.js";
 
 /**
  * Evaluate an array of rules against the current local time and return
@@ -45,7 +50,7 @@ import { isExactDateMatch, isInDateRange, getMatchingTimeRule, isSsr } from './u
  *   { time: 18, style: 'bg-zinc-900' },
  * ]);
  */
-export function auto(rules, fallback = '', _now) {
+export function auto(rules, fallback = "", _now) {
   if (!rules || rules.length === 0) {
     return fallback;
   }
@@ -60,17 +65,54 @@ export function auto(rules, fallback = '', _now) {
   const timeRules = [];
 
   for (const rule of rules) {
-    if (rule.date != null) {
-      const parts = rule.date.split('-');
-      if (parts.length === 3) {
-        exactOneOff.push(rule);
-      } else {
-        exactRecurring.push(rule);
+    // If date and time together
+    if (rule.date != null && rule.time != null) {
+      const dateStr = String(rule.date);
+      const timeStr = String(rule.time);
+
+      // E.g. time:18; or time: 18:30:30;
+      // E.g. date:06-01; or date:2026-06-01
+      const isValidDate = dateStr.length >= 4 && dateStr.length <= 10;
+      const isValidTime = timeStr.length <= 2 || timeStr.length >= 8;
+
+      if (isValidDate && isValidTime) {
+        const parts = dateStr.split("-");
+        if (parts.length === 3) {
+          exactOneOff.push(rule);
+        } else {
+          exactRecurring.push(rule);
+        }
       }
-    } else if (rule.since != null && rule.until != null) {
+    }
+
+    // If only date
+    else if (rule.date != null) {
+      const dateStr = String(rule.date);
+      const isValidDate = dateStr.length >= 4 && dateStr.length <= 10;
+
+      if (isValidDate) {
+        const parts = dateStr.split("-");
+        if (parts.length === 3) {
+          exactOneOff.push(rule);
+        } else {
+          exactRecurring.push(rule);
+        }
+      }
+    }
+
+    // If only time
+    else if (rule.time != null) {
+      const timeStr = String(rule.time);
+      const isValidTime = timeStr.length <= 2 || timeStr.length >= 8;
+
+      if (isValidTime) {
+        timeRules.push(rule);
+      }
+    }
+
+    // If only range
+    else if (rule.since != null && rule.until != null) {
       dateRanges.push(rule);
-    } else if (rule.time != null) {
-      timeRules.push(rule);
     }
   }
 
