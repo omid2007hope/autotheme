@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { auto } from '../src/core/engine.js';
+import { auto, compile } from '../src/core/engine.js';
 
 describe('auto()', () => {
   describe('fallback behavior', () => {
@@ -183,5 +183,55 @@ describe('auto()', () => {
       const now = new Date(2027, 9, 31, 14, 0, 0);
       assert.deepStrictEqual(auto(rules, {}, now), { backgroundColor: 'orange', color: 'black' });
     });
+  });
+});
+
+describe('compile()', () => {
+  it('categorizes rules correctly', () => {
+    const rules = [
+      { time: 18, style: 'evening' },
+      { date: '12-25', style: 'xmas' },
+      { date: '2025-01-01', style: 'newyear' },
+      { since: '06-01', until: '08-31', style: 'summer' },
+      { time: 6, style: 'morning' }
+    ];
+    
+    const compiled = compile(rules);
+    
+    assert.strictEqual(compiled.__compiled, true);
+    assert.strictEqual(compiled.exactOneOff.length, 1);
+    assert.strictEqual(compiled.exactRecurring.length, 1);
+    assert.strictEqual(compiled.dateRanges.length, 1);
+    assert.strictEqual(compiled.timeRules.length, 2);
+  });
+
+  it('pre-sorts timeRules descending', () => {
+    const rules = [
+      { time: 6, style: 'morning' },
+      { time: 18, style: 'evening' },
+      { time: 0, style: 'midnight' },
+    ];
+    const compiled = compile(rules);
+    
+    assert.strictEqual(compiled.timeRules[0].time, 18);
+    assert.strictEqual(compiled.timeRules[1].time, 6);
+    assert.strictEqual(compiled.timeRules[2].time, 0);
+  });
+
+  it('extracts unique css vars across all rules', () => {
+    const rules = [
+      { time: 6, vars: { '--bg': 'white', '--text': 'black' } },
+      { time: 18, vars: { '--bg': 'black', '--border': 'gray' } }
+    ];
+    const compiled = compile(rules);
+    
+    assert.deepStrictEqual(compiled.allVarKeys.sort(), ['--bg', '--text', '--border'].sort());
+  });
+
+  it('safely returns early if passed an already compiled object', () => {
+    const rules = [{ time: 6, style: 'morning' }];
+    const compiled = compile(rules);
+    const compiledAgain = compile(compiled);
+    assert.strictEqual(compiled, compiledAgain); // Same reference
   });
 });

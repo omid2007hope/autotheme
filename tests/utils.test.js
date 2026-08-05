@@ -90,11 +90,12 @@ describe('isInDateRange', () => {
 });
 
 describe('getMatchingTimeRule', () => {
+  // Rules must be pre-sorted descending by time, as output by compile()
   const timeRules = [
-    { time: 0,  style: 'midnight' },
-    { time: 6,  style: 'morning' },
-    { time: 12, style: 'afternoon' },
     { time: 18, style: 'evening' },
+    { time: 12, style: 'afternoon' },
+    { time: 6,  style: 'morning' },
+    { time: 0,  style: 'midnight' },
   ];
 
   it('matches the correct time slot', () => {
@@ -123,7 +124,7 @@ describe('getMatchingTimeRule', () => {
   });
 
   it('wraps around when hour is before all rules', () => {
-    const rules = [{ time: 8, style: 'day' }, { time: 20, style: 'night' }];
+    const rules = [{ time: 20, style: 'night' }, { time: 8, style: 'day' }];
     const result = getMatchingTimeRule(rules, 3);
     // 3 AM is before 8 AM — should wrap to the latest rule (20)
     assert.strictEqual(result.style, 'night');
