@@ -100,7 +100,7 @@ export function isInDateRange(rule, now) {
 
 /**
  * Find the best matching time-of-day rule for the current hour.
- * Rules are sorted descending so the highest hour ≤ current hour wins.
+ * Assumes the `timeRules` array is already sorted descending by the compiler.
  *
  * @param {Array<{ time: number, style: string | object }>} timeRules - Rules with `time` fields
  * @param {number} hour - Current hour (0–23)
@@ -109,10 +109,7 @@ export function isInDateRange(rule, now) {
 export function getMatchingTimeRule(timeRules, hour) {
   if (timeRules.length === 0) return null;
 
-  // Sort descending by time
-  const sorted = [...timeRules].sort((a, b) => b.time - a.time);
-
-  for (const rule of sorted) {
+  for (const rule of timeRules) {
     if (hour >= rule.time) {
       return rule;
     }
@@ -120,5 +117,5 @@ export function getMatchingTimeRule(timeRules, hour) {
 
   // If no rule has a time ≤ the current hour, wrap around to the latest rule
   // (e.g., it's 2 AM and the last rule starts at 22:00 — that's still the active one)
-  return sorted[0];
+  return timeRules[0];
 }

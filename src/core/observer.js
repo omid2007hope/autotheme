@@ -6,7 +6,7 @@
  * @module core/observer
  */
 
-import { auto } from './engine.js';
+import { auto, compile } from './engine.js';
 import { applyClasses } from '../adapters/dom.js';
 import { isSsr } from './utils.js';
 
@@ -55,13 +55,14 @@ export function observe(config) {
     return { stop() {} };
   }
 
+  const compiledRules = compile(rules);
   let previousStyle = '';
 
   /**
    * Evaluate rules and apply the result to the target element.
    */
   function tick() {
-    const nextStyle = auto(rules, fallback);
+    const nextStyle = auto(compiledRules, fallback);
 
     // Only mutate DOM if the style actually changed
     if (nextStyle !== previousStyle) {

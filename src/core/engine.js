@@ -50,28 +50,43 @@ import {
  *   { time: 18, style: 'bg-zinc-900' },
  * ]);
  */
-export function auto(rules, fallback = "", _now) {
-  if (!rules || rules.length === 0) {
-    return fallback;
+/**
+ * Pre-compile rules to eliminate sorting and GC overhead during evaluation.
+ * @param {Array<import('../types/index.js').AutoRule>} rules
+ * @returns {object} Compiled rules structure
+ */
+export function compile(rules) {
+  if (!Array.isArray(rules)) {
+    if (rules && rules.__compiled) return rules;
+    return {
+      __compiled: true,
+      exactOneOff: [],
+      exactRecurring: [],
+      dateRanges: [],
+      timeRules: [],
+      allVarKeys: [],
+    };
   }
 
-  const now = _now || new Date();
-
-  // ── Phase 1: Exact date matches (highest priority) ──
-  // Check YYYY-MM-DD (one-off) first, then MM-DD (recurring)
   const exactOneOff = [];
   const exactRecurring = [];
   const dateRanges = [];
   const timeRules = [];
+  const allVarKeys = new Set();
 
   for (const rule of rules) {
+    // Extract var keys for css-vars.js optimization
+    if (rule.vars) {
+      for (const key of Object.keys(rule.vars)) {
+        allVarKeys.add(key);
+      }
+    }
+
     // If date and time together
     if (rule.date != null && rule.time != null) {
       const dateStr = String(rule.date);
       const timeStr = String(rule.time);
 
-      // E.g. time:18; or time: 18:30:30;
-      // E.g. date:06-01; or date:2026-06-01
       const isValidDate = dateStr.length >= 4 && dateStr.length <= 10;
       const isValidTime = timeStr.length <= 2 || timeStr.length >= 8;
 
@@ -84,7 +99,6 @@ export function auto(rules, fallback = "", _now) {
         }
       }
     }
-
     // If only date
     else if (rule.date != null) {
       const dateStr = String(rule.date);
@@ -99,7 +113,6 @@ export function auto(rules, fallback = "", _now) {
         }
       }
     }
-
     // If only time
     else if (rule.time != null) {
       const timeStr = String(rule.time);
@@ -109,13 +122,32 @@ export function auto(rules, fallback = "", _now) {
         timeRules.push(rule);
       }
     }
-
     // If only range
     else if (rule.since != null && rule.until != null) {
       dateRanges.push(rule);
     }
   }
 
+  // Pre-sort time rules descending
+  timeRules.sort((a, b) => b.time - a.time);
+
+  return {
+    __compiled: true,
+    exactOneOff,
+    exactRecurring,
+    dateRanges,
+    timeRules,
+    allVarKeys: Array.from(allVarKeys),
+  };
+}
+
+export function auto(rulesInput, fallback = "", _now) {
+  if (!rulesInput || (Array.isArray(rulesInput) && rulesInput.length === 0)) {
+    return fallback;
+  }
+
+  const compiled = compile(rulesInput);
+  const now = _now || new Date();
   const hour = now.getHours();
 
   // Helper to evaluate time conditions for rules that matched a date condition
@@ -129,6 +161,8 @@ export function auto(rules, fallback = "", _now) {
       const normalizedTimeRules = matchedRules.map((r) =>
         r.time != null ? r : { ...r, time: 0 }
       );
+      // Sort locally since utils getMatchingTimeRule no longer sorts
+      normalizedTimeRules.sort((a, b) => b.time - a.time);
       const bestMatch = getMatchingTimeRule(normalizedTimeRules, hour);
       return bestMatch ? bestMatch.style : null;
     }
@@ -137,22 +171,22 @@ export function auto(rules, fallback = "", _now) {
   };
 
   // Priority 1: One-off exact date (YYYY-MM-DD)
-  const matchedOneOffs = exactOneOff.filter((r) => isExactDateMatch(r, now));
+  const matchedOneOffs = compiled.exactOneOff.filter((r) => isExactDateMatch(r, now));
   const oneOffStyle = evaluateTimeMatches(matchedOneOffs);
   if (oneOffStyle) return oneOffStyle;
 
   // Priority 2: Recurring exact date (MM-DD)
-  const matchedRecurring = exactRecurring.filter((r) => isExactDateMatch(r, now));
+  const matchedRecurring = compiled.exactRecurring.filter((r) => isExactDateMatch(r, now));
   const recurringStyle = evaluateTimeMatches(matchedRecurring);
   if (recurringStyle) return recurringStyle;
 
   // Priority 3: Date ranges (since/until)
-  const matchedRanges = dateRanges.filter((r) => isInDateRange(r, now));
+  const matchedRanges = compiled.dateRanges.filter((r) => isInDateRange(r, now));
   const rangeStyle = evaluateTimeMatches(matchedRanges);
   if (rangeStyle) return rangeStyle;
 
   // Priority 4: Time-of-day
-  const matchedTime = getMatchingTimeRule(timeRules, hour);
+  const matchedTime = getMatchingTimeRule(compiled.timeRules, hour);
   if (matchedTime) {
     return matchedTime.style;
   }

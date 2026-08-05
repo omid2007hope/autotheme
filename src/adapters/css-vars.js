@@ -6,6 +6,7 @@
  */
 
 import { isSsr, isInDateRange, isExactDateMatch, getMatchingTimeRule } from '../core/utils.js';
+import { compile } from '../core/engine.js';
 
 /**
  * @typedef {object} AutoVarRule
@@ -21,7 +22,7 @@ import { isSsr, isInDateRange, isExactDateMatch, getMatchingTimeRule } from '../
  * target element. Removes properties from the previous match before
  * applying the new set.
  *
- * @param {AutoVarRule[]} rules - Array of variable rules
+ * @param {AutoVarRule[]} rulesInput - Array of variable rules or a compiled rule object
  * @param {HTMLElement} [target] - Target element (defaults to `document.documentElement`)
  *
  * @example
@@ -30,31 +31,14 @@ import { isSsr, isInDateRange, isExactDateMatch, getMatchingTimeRule } from '../
  *   { time: 18, vars: { '--bg': '#0f172a', '--text': '#e2e8f0' } },
  * ]);
  */
-export function autoVars(rules, target) {
+export function autoVars(rulesInput, target, _now) {
   if (isSsr()) return;
 
   const el = target || document.documentElement;
-  const now = new Date();
+  const now = _now || new Date();
   const hour = now.getHours();
-  const exactOneOff = [];
-  const exactRecurring = [];
-  const dateRanges = [];
-  const timeRules = [];
 
-  for (const rule of rules) {
-    if (rule.date != null) {
-      const parts = rule.date.split("-");
-      if (parts.length === 3) {
-        exactOneOff.push(rule);
-      } else {
-        exactRecurring.push(rule);
-      }
-    } else if (rule.since != null && rule.until != null) {
-      dateRanges.push(rule);
-    } else if (rule.time != null) {
-      timeRules.push(rule);
-    }
-  }
+  const compiled = compile(rulesInput);
 
   const evaluateTimeMatches = (matchedRules) => {
     if (matchedRules.length === 0) return null;
@@ -63,37 +47,31 @@ export function autoVars(rules, target) {
       const normalizedTimeRules = matchedRules.map((r) =>
         r.time != null ? r : { ...r, time: 0 }
       );
+      // Sort locally since utils getMatchingTimeRule no longer sorts
+      normalizedTimeRules.sort((a, b) => b.time - a.time);
       return getMatchingTimeRule(normalizedTimeRules, hour);
     }
     return matchedRules[0];
   };
 
-  let matched = evaluateTimeMatches(exactOneOff.filter(r => isExactDateMatch(r, now)));
+  let matched = evaluateTimeMatches(compiled.exactOneOff.filter(r => isExactDateMatch(r, now)));
 
   if (!matched) {
-    matched = evaluateTimeMatches(exactRecurring.filter(r => isExactDateMatch(r, now)));
+    matched = evaluateTimeMatches(compiled.exactRecurring.filter(r => isExactDateMatch(r, now)));
   }
 
   if (!matched) {
-    matched = evaluateTimeMatches(dateRanges.filter(r => isInDateRange(r, now)));
+    matched = evaluateTimeMatches(compiled.dateRanges.filter(r => isInDateRange(r, now)));
   }
 
   if (!matched) {
-    matched = getMatchingTimeRule(timeRules, hour);
+    matched = getMatchingTimeRule(compiled.timeRules, hour);
   }
 
   if (!matched || !matched.vars) return;
 
   // Remove ALL custom properties that any rule could have set
-  const allKeys = new Set();
-  for (const rule of rules) {
-    if (rule.vars) {
-      for (const key of Object.keys(rule.vars)) {
-        allKeys.add(key);
-      }
-    }
-  }
-  for (const key of allKeys) {
+  for (const key of compiled.allVarKeys) {
     el.style.removeProperty(key);
   }
 

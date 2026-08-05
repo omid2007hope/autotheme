@@ -7,7 +7,7 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { auto } from '../core/engine.js';
+import { auto, compile } from '../core/engine.js';
 
 /**
  * React hook that returns the currently active style and re-evaluates
@@ -36,10 +36,13 @@ export function useAutoTheme(rules, fallback = '', options = {}) {
 
   // Deep compare memoize to prevent infinite loops when inline arrays are passed
   const rulesRef = useRef(rules);
-  if (JSON.stringify(rules) !== JSON.stringify(rulesRef.current)) {
+  const compiledRef = useRef(null);
+
+  if (JSON.stringify(rules) !== JSON.stringify(rulesRef.current) || !compiledRef.current) {
     rulesRef.current = rules;
+    compiledRef.current = compile(rules);
   }
-  const memoizedRules = rulesRef.current;
+  const memoizedCompiledRules = compiledRef.current;
 
   const fallbackRef = useRef(fallback);
   if (JSON.stringify(fallback) !== JSON.stringify(fallbackRef.current)) {
@@ -48,8 +51,8 @@ export function useAutoTheme(rules, fallback = '', options = {}) {
   const memoizedFallback = fallbackRef.current;
 
   const evaluate = useCallback(
-    () => auto(memoizedRules, memoizedFallback),
-    [memoizedRules, memoizedFallback]
+    () => auto(memoizedCompiledRules, memoizedFallback),
+    [memoizedCompiledRules, memoizedFallback]
   );
 
   // Use a callback initializer so if `evaluate()` returns a function, React doesn't execute it
