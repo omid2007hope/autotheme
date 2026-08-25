@@ -70,7 +70,7 @@ auto(rules: AutoRule[], fallback?: string | object): string | object
 
 | Key | Type | Description | Example |
 |---|---|---|---|
-| `time` | `number` | Hour of day (0–23). Active from this hour onward until the next rule. | `time: 18` |
+| `time` | `number \| string` | Hour of day (0–23), exact time (`"HH:MM"`), or total minutes (0-1439). Active from this time onward until the next rule. | `time: "14:25"` |
 | `date` | `string` | Exact date (`MM-DD`) or full date (`YYYY-MM-DD`). Highest priority. | `date: '10-31'` |
 | `since` | `string` | Start of a date range (`MM-DD` or `YYYY-MM-DD`). | `since: '12-01'` |
 | `until` | `string` | End of a date range (`MM-DD` or `YYYY-MM-DD`). | `until: '02-28'` |
@@ -164,6 +164,20 @@ const rules = [
 
 <div className={auto(rules, "bg-gray-50")} />
 ```
+
+### Minute-Level Resolution (Time Strings)
+
+Instead of just hours, you can pass `"HH:MM"` strings to trigger rules down to the exact minute.
+
+```jsx
+const rules = [
+  { time: "06:00", style: "bg-orange-100" }, // Sunrise
+  { time: "14:25", style: "bg-blue-100" },   // Exact minute
+  { time: "19:45", style: "bg-indigo-900" }  // Sunset
+];
+```
+
+---
 
 ### Exact Date (One-Off Events)
 

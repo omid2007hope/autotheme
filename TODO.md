@@ -22,6 +22,11 @@ _Fix:_ The engine must evaluate all conditions on a single rule as a logical `AN
 `isInDateRange` extracts the month and day (`month * 100 + day`) but completely discards the year from `since` and `until`. Passing `"2024-01-01"` acts identically to `"2025-01-01"`.
 _Fix:_ Account for `year` properties if provided, falling back to annual recurrence only when the year is absent.
 
+[x] **Every-Single-Minute Resolution (`engine.js` & `utils.js`)**:
+The engine previously only supported hour integers (`0-23`).
+_Fix:_ Support exact `"HH:MM"` strings allowing for ultra-granular 1440-minute daily interpolations, while keeping backwards compatibility with legacy integers.
+
+
 ### 2. React & DOM Adapter Crashes
 
 [x] **String Split Crash in `applyClasses` (`dom.js`)**:
