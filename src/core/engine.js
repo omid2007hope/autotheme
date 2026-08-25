@@ -10,6 +10,7 @@ import {
   isExactDateMatch,
   isInDateRange,
   getMatchingTimeRule,
+  parseTime,
   isSsr,
 } from "./utils.js";
 
@@ -82,20 +83,20 @@ export function compile(rules) {
       }
     }
 
+    const parsedMinutes = rule.time != null ? parseTime(rule.time) : null;
+    const compiledRule = parsedMinutes !== null ? { ...rule, _minutes: parsedMinutes } : rule;
+
     // If date and time together
     if (rule.date != null && rule.time != null) {
       const dateStr = String(rule.date);
-      const timeStr = String(rule.time);
-
       const isValidDate = dateStr.length >= 4 && dateStr.length <= 10;
-      const isValidTime = timeStr.length <= 2 || timeStr.length >= 8;
 
-      if (isValidDate && isValidTime) {
+      if (isValidDate && parsedMinutes !== null) {
         const parts = dateStr.split("-");
         if (parts.length === 3) {
-          exactOneOff.push(rule);
+          exactOneOff.push(compiledRule);
         } else {
-          exactRecurring.push(rule);
+          exactRecurring.push(compiledRule);
         }
       }
     }
@@ -107,29 +108,26 @@ export function compile(rules) {
       if (isValidDate) {
         const parts = dateStr.split("-");
         if (parts.length === 3) {
-          exactOneOff.push(rule);
+          exactOneOff.push(compiledRule);
         } else {
-          exactRecurring.push(rule);
+          exactRecurring.push(compiledRule);
         }
       }
     }
     // If only time
     else if (rule.time != null) {
-      const timeStr = String(rule.time);
-      const isValidTime = timeStr.length <= 2 || timeStr.length >= 8;
-
-      if (isValidTime) {
-        timeRules.push(rule);
+      if (parsedMinutes !== null) {
+        timeRules.push(compiledRule);
       }
     }
     // If only range
     else if (rule.since != null && rule.until != null) {
-      dateRanges.push(rule);
+      dateRanges.push(compiledRule);
     }
   }
 
   // Pre-sort time rules descending
-  timeRules.sort((a, b) => b.time - a.time);
+  timeRules.sort((a, b) => b._minutes - a._minutes);
 
   return {
     __compiled: true,
@@ -148,8 +146,7 @@ export function auto(rulesInput, fallback = "", _now) {
 
   const compiled = compile(rulesInput);
   const now = _now || new Date();
-  const hour = now.getHours();
-  const minute = now.getMinutes();
+  const totalMinutes = now.getHours() * 60 + now.getMinutes();
 
   // Helper to evaluate time conditions for rules that matched a date condition
   const evaluateTimeMatches = (matchedRules) => {
@@ -160,11 +157,11 @@ export function auto(rulesInput, fallback = "", _now) {
     if (hasTimeRule) {
       // Treat rules without a time condition as active from midnight (time: 0)
       const normalizedTimeRules = matchedRules.map((r) =>
-        r.time != null ? r : { ...r, time: 0 },
+        r.time != null ? r : { ...r, _minutes: 0 },
       );
       // Sort locally since utils getMatchingTimeRule no longer sorts
-      normalizedTimeRules.sort((a, b) => b.time - a.time);
-      const bestMatch = getMatchingTimeRule(normalizedTimeRules, hour, minute);
+      normalizedTimeRules.sort((a, b) => b._minutes - a._minutes);
+      const bestMatch = getMatchingTimeRule(normalizedTimeRules, totalMinutes);
       return bestMatch ? bestMatch.style : null;
     }
 
@@ -193,7 +190,7 @@ export function auto(rulesInput, fallback = "", _now) {
   if (rangeStyle) return rangeStyle;
 
   // Priority 4: Time-of-day
-  const matchedTime = getMatchingTimeRule(compiled.timeRules, hour, minute);
+  const matchedTime = getMatchingTimeRule(compiled.timeRules, totalMinutes);
   if (matchedTime) {
     return matchedTime.style;
   }

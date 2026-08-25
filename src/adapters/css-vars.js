@@ -41,8 +41,7 @@ export function autoVars(rulesInput, target, _now) {
 
   const el = target || document.documentElement;
   const now = _now || new Date();
-  const hour = now.getHours();
-  const minute = now.getMinutes();
+  const totalMinutes = now.getHours() * 60 + now.getMinutes();
 
   const compiled = compile(rulesInput);
 
@@ -51,11 +50,11 @@ export function autoVars(rulesInput, target, _now) {
     const hasTimeRule = matchedRules.some((r) => r.time != null);
     if (hasTimeRule) {
       const normalizedTimeRules = matchedRules.map((r) =>
-        r.time != null ? r : { ...r, time: 0 },
+        r.time != null ? r : { ...r, _minutes: 0 },
       );
       // Sort locally since utils getMatchingTimeRule no longer sorts
-      normalizedTimeRules.sort((a, b) => b.time - a.time);
-      return getMatchingTimeRule(normalizedTimeRules, hour, minute);
+      normalizedTimeRules.sort((a, b) => b._minutes - a._minutes);
+      return getMatchingTimeRule(normalizedTimeRules, totalMinutes);
     }
     return matchedRules[0];
   };
@@ -77,7 +76,7 @@ export function autoVars(rulesInput, target, _now) {
   }
 
   if (!matched) {
-    matched = getMatchingTimeRule(compiled.timeRules, hour, minute);
+    matched = getMatchingTimeRule(compiled.timeRules, totalMinutes);
   }
 
   if (!matched || !matched.vars) return;

@@ -99,19 +99,43 @@ export function isInDateRange(rule, now) {
 }
 
 /**
- * Find the best matching time-of-day rule for the current hour.
+ * Parse a time value into total minutes from midnight.
+ * @param {number|string} timeVal
+ * @returns {number|null}
+ */
+export function parseTime(timeVal) {
+  if (typeof timeVal === "number") {
+    if (timeVal >= 0 && timeVal <= 23) {
+      return timeVal * 60; // legacy hours
+    }
+  } else if (typeof timeVal === "string") {
+    if (timeVal.includes(":")) {
+      const parts = timeVal.split(":");
+      const h = parseInt(parts[0], 10);
+      const m = parseInt(parts[1], 10);
+      if (!isNaN(h) && !isNaN(m)) return h * 60 + m;
+    } else {
+      const h = parseInt(timeVal, 10);
+      if (!isNaN(h) && h >= 0 && h <= 23) return h * 60;
+    }
+  }
+  return null;
+}
+
+/**
+ * Find the best matching time-of-day rule for the current time.
  * Assumes the `timeRules` array is already sorted descending by the compiler.
  *
- * @param {Array<{ time: number, style: string | object }>} timeRules - Rules with `time` fields
- * @param {number} hour - Current hour (0–23)
- * @returns {{ time: number, style: string | object } | null} The matching rule or null
+ * @param {Array<{ _minutes: number, style: string | object }>} timeRules - Rules with `_minutes` fields
+ * @param {number} totalMinutes - Current total minutes from midnight
+ * @returns {{ _minutes: number, style: string | object } | null} The matching rule or null
  */
-export function getMatchingTimeRule(timeRules, hour, minutes) {
+export function getMatchingTimeRule(timeRules, totalMinutes) {
   if (timeRules.length === 0) return null;
 
   for (const rule of timeRules) {
-    if (hour >= rule.time && minutes >= rule.time) {
-      return { hour, minutes };
+    if (totalMinutes >= rule._minutes) {
+      return rule;
     }
   }
 

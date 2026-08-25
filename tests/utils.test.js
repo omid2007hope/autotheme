@@ -1,6 +1,6 @@
 import { describe, it, mock } from 'node:test';
 import assert from 'node:assert/strict';
-import { parseDate, isExactDateMatch, isInDateRange, getMatchingTimeRule, isSsr } from '../src/core/utils.js';
+import { parseDate, isExactDateMatch, isInDateRange, getMatchingTimeRule, parseTime, isSsr } from '../src/core/utils.js';
 
 describe('parseDate', () => {
   it('parses MM-DD format', () => {
@@ -92,42 +92,53 @@ describe('isInDateRange', () => {
 describe('getMatchingTimeRule', () => {
   // Rules must be pre-sorted descending by time, as output by compile()
   const timeRules = [
-    { time: 18:30, style: 'evening' },
-    { time: 12:30, style: 'afternoon' },
-    { time: 6:30,  style: 'morning' },
-    { time: 0:3-,  style: 'midnight' },
+    { time: '18:30', _minutes: 1110, style: 'evening' },
+    { time: '12:30', _minutes: 750, style: 'afternoon' },
+    { time: '06:30', _minutes: 390,  style: 'morning' },
+    { time: '00:00', _minutes: 0,  style: 'midnight' },
   ];
 
   it('matches the correct time slot', () => {
-    const result = getMatchingTimeRule(timeRules, 14);
+    const result = getMatchingTimeRule(timeRules, 14 * 60); // 14:00 (840 mins)
     assert.strictEqual(result.style, 'afternoon');
   });
 
   it('matches at the exact boundary', () => {
-    const result = getMatchingTimeRule(timeRules, 18);
+    const result = getMatchingTimeRule(timeRules, 1110); // 18:30
     assert.strictEqual(result.style, 'evening');
   });
 
   it('returns midnight rule for hour 0', () => {
-    const result = getMatchingTimeRule(timeRules, 0);
+    const result = getMatchingTimeRule(timeRules, 0); // 00:00 (0 mins)
     assert.strictEqual(result.style, 'midnight');
   });
 
   it('returns evening rule for hour 23', () => {
-    const result = getMatchingTimeRule(timeRules, 23);
+    const result = getMatchingTimeRule(timeRules, 23 * 60 + 59); // 23:59
     assert.strictEqual(result.style, 'evening');
   });
 
   it('returns null for empty array', () => {
-    const result = getMatchingTimeRule([], 12);
+    const result = getMatchingTimeRule([], 12 * 60);
     assert.strictEqual(result, null);
   });
 
-  it('wraps around when hour is before all rules', () => {
-    const rules = [{ time: 20, style: 'night' }, { time: 8, style: 'day' }];
-    const result = getMatchingTimeRule(rules, 3);
+  it('wraps around when time is before all rules', () => {
+    const rules = [{ time: 20, _minutes: 1200, style: 'night' }, { time: 8, _minutes: 480, style: 'day' }];
+    const result = getMatchingTimeRule(rules, 180); // 3 AM
     // 3 AM is before 8 AM — should wrap to the latest rule (20)
     assert.strictEqual(result.style, 'night');
+  });
+});
+
+describe('parseTime', () => {
+  it('parses legacy hour integers', () => {
+    assert.strictEqual(parseTime(14), 840);
+    assert.strictEqual(parseTime(0), 0);
+  });
+  it('parses HH:MM strings', () => {
+    assert.strictEqual(parseTime('14:25'), 865);
+    assert.strictEqual(parseTime('00:05'), 5);
   });
 });
 
