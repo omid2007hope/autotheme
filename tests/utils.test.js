@@ -92,10 +92,10 @@ describe('isInDateRange', () => {
 describe('getMatchingTimeRule', () => {
   // Rules must be pre-sorted descending by time, as output by compile()
   const timeRules = [
-    { time: 18, style: 'evening' },
-    { time: 12, style: 'afternoon' },
-    { time: 6,  style: 'morning' },
-    { time: 0,  style: 'midnight' },
+    { time: 18:30, style: 'evening' },
+    { time: 12:30, style: 'afternoon' },
+    { time: 6:30,  style: 'morning' },
+    { time: 0:3-,  style: 'midnight' },
   ];
 
   it('matches the correct time slot', () => {
@@ -138,3 +138,4 @@ describe('isSsr', () => {
     assert.strictEqual(result, true);
   });
 });
+ 

@@ -149,6 +149,7 @@ export function auto(rulesInput, fallback = "", _now) {
   const compiled = compile(rulesInput);
   const now = _now || new Date();
   const hour = now.getHours();
+  const minute = now.getMinutes();
 
   // Helper to evaluate time conditions for rules that matched a date condition
   const evaluateTimeMatches = (matchedRules) => {
@@ -159,11 +160,11 @@ export function auto(rulesInput, fallback = "", _now) {
     if (hasTimeRule) {
       // Treat rules without a time condition as active from midnight (time: 0)
       const normalizedTimeRules = matchedRules.map((r) =>
-        r.time != null ? r : { ...r, time: 0 }
+        r.time != null ? r : { ...r, time: 0 },
       );
       // Sort locally since utils getMatchingTimeRule no longer sorts
       normalizedTimeRules.sort((a, b) => b.time - a.time);
-      const bestMatch = getMatchingTimeRule(normalizedTimeRules, hour);
+      const bestMatch = getMatchingTimeRule(normalizedTimeRules, hour, minute);
       return bestMatch ? bestMatch.style : null;
     }
 
@@ -171,22 +172,28 @@ export function auto(rulesInput, fallback = "", _now) {
   };
 
   // Priority 1: One-off exact date (YYYY-MM-DD)
-  const matchedOneOffs = compiled.exactOneOff.filter((r) => isExactDateMatch(r, now));
+  const matchedOneOffs = compiled.exactOneOff.filter((r) =>
+    isExactDateMatch(r, now),
+  );
   const oneOffStyle = evaluateTimeMatches(matchedOneOffs);
   if (oneOffStyle) return oneOffStyle;
 
   // Priority 2: Recurring exact date (MM-DD)
-  const matchedRecurring = compiled.exactRecurring.filter((r) => isExactDateMatch(r, now));
+  const matchedRecurring = compiled.exactRecurring.filter((r) =>
+    isExactDateMatch(r, now),
+  );
   const recurringStyle = evaluateTimeMatches(matchedRecurring);
   if (recurringStyle) return recurringStyle;
 
   // Priority 3: Date ranges (since/until)
-  const matchedRanges = compiled.dateRanges.filter((r) => isInDateRange(r, now));
+  const matchedRanges = compiled.dateRanges.filter((r) =>
+    isInDateRange(r, now),
+  );
   const rangeStyle = evaluateTimeMatches(matchedRanges);
   if (rangeStyle) return rangeStyle;
 
   // Priority 4: Time-of-day
-  const matchedTime = getMatchingTimeRule(compiled.timeRules, hour);
+  const matchedTime = getMatchingTimeRule(compiled.timeRules, hour, minute);
   if (matchedTime) {
     return matchedTime.style;
   }

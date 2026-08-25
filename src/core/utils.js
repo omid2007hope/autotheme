@@ -106,12 +106,12 @@ export function isInDateRange(rule, now) {
  * @param {number} hour - Current hour (0–23)
  * @returns {{ time: number, style: string | object } | null} The matching rule or null
  */
-export function getMatchingTimeRule(timeRules, hour) {
+export function getMatchingTimeRule(timeRules, hour, minutes) {
   if (timeRules.length === 0) return null;
 
   for (const rule of timeRules) {
-    if (hour >= rule.time) {
-      return rule;
+    if (hour >= rule.time && minutes >= rule.time) {
+      return { hour, minutes };
     }
   }
 

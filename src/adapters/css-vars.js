@@ -5,8 +5,13 @@
  * @module adapters/css-vars
  */
 
-import { isSsr, isInDateRange, isExactDateMatch, getMatchingTimeRule } from '../core/utils.js';
-import { compile } from '../core/engine.js';
+import {
+  isSsr,
+  isInDateRange,
+  isExactDateMatch,
+  getMatchingTimeRule,
+} from "../core/utils.js";
+import { compile } from "../core/engine.js";
 
 /**
  * @typedef {object} AutoVarRule
@@ -37,6 +42,7 @@ export function autoVars(rulesInput, target, _now) {
   const el = target || document.documentElement;
   const now = _now || new Date();
   const hour = now.getHours();
+  const minute = now.getMinutes();
 
   const compiled = compile(rulesInput);
 
@@ -45,27 +51,33 @@ export function autoVars(rulesInput, target, _now) {
     const hasTimeRule = matchedRules.some((r) => r.time != null);
     if (hasTimeRule) {
       const normalizedTimeRules = matchedRules.map((r) =>
-        r.time != null ? r : { ...r, time: 0 }
+        r.time != null ? r : { ...r, time: 0 },
       );
       // Sort locally since utils getMatchingTimeRule no longer sorts
       normalizedTimeRules.sort((a, b) => b.time - a.time);
-      return getMatchingTimeRule(normalizedTimeRules, hour);
+      return getMatchingTimeRule(normalizedTimeRules, hour, minute);
     }
     return matchedRules[0];
   };
 
-  let matched = evaluateTimeMatches(compiled.exactOneOff.filter(r => isExactDateMatch(r, now)));
+  let matched = evaluateTimeMatches(
+    compiled.exactOneOff.filter((r) => isExactDateMatch(r, now)),
+  );
 
   if (!matched) {
-    matched = evaluateTimeMatches(compiled.exactRecurring.filter(r => isExactDateMatch(r, now)));
+    matched = evaluateTimeMatches(
+      compiled.exactRecurring.filter((r) => isExactDateMatch(r, now)),
+    );
   }
 
   if (!matched) {
-    matched = evaluateTimeMatches(compiled.dateRanges.filter(r => isInDateRange(r, now)));
+    matched = evaluateTimeMatches(
+      compiled.dateRanges.filter((r) => isInDateRange(r, now)),
+    );
   }
 
   if (!matched) {
-    matched = getMatchingTimeRule(compiled.timeRules, hour);
+    matched = getMatchingTimeRule(compiled.timeRules, hour, minute);
   }
 
   if (!matched || !matched.vars) return;
