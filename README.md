@@ -70,7 +70,7 @@ auto(rules: AutoRule[], fallback?: string | object): string | object
 
 | Key | Type | Description | Example |
 |---|---|---|---|
-| `time` | `number \| string` | Hour of day (0–23), exact time (`"HH:MM"`), or total minutes (0-1439). Active from this time onward until the next rule. | `time: "14:25"` |
+| `time` | `number \| string` | Hour of day as a number (0–23) or exact time as a string (`"HH:MM"`). Active from this time onward until the next rule. | `time: "14:25"` |
 | `date` | `string` | Exact date (`MM-DD`) or full date (`YYYY-MM-DD`). Highest priority. | `date: '10-31'` |
 | `since` | `string` | Start of a date range (`MM-DD` or `YYYY-MM-DD`). | `since: '12-01'` |
 | `until` | `string` | End of a date range (`MM-DD` or `YYYY-MM-DD`). | `until: '02-28'` |
@@ -102,6 +102,9 @@ const rules = [
 
 <div className={auto(rules, "bg-gray-100")} />
 ```
+
+> [!WARNING]
+> **Tailwind CSS Purging Note:** Tailwind's compiler scans your source files for unbroken string literals. Ensure that wherever you define your `rules` array is included in your `tailwind.config.js` `content` paths. Do not dynamically construct class strings (e.g., \`bg-${color}-500\`), or Tailwind will purge them in production. Alternatively, you can add your AutoTheme classes to the `safelist` in your Tailwind config.
 
 ### Standard CSS (Inline Styles)
 
@@ -301,6 +304,4 @@ This project is currently under active development. Contribution guidelines will
 
 ## License
 
-Copyright © 2026 Omid Teimory. All rights reserved.
-
-See [LICENSE](./License) for details.
+Licensed under the [MIT License](./LICENSE). Copyright © 2026 Omid Teimory.

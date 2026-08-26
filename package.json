@@ -1,6 +1,6 @@
 {
   "name": "@omid2007hope/autotheme",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "Self-driving CSS. Zero-dependency time, date, and seasonal UI theming.",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -42,7 +42,7 @@
     "theming"
   ],
   "author": "Omid Teimory",
-  "license": "SEE LICENSE IN License",
+  "license": "MIT",
   "peerDependencies": {
     "react": ">=16.8.0"
   },
