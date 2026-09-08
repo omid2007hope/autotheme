@@ -150,7 +150,7 @@ export function auto(cssEntryArray, fallback = "", _now) {
   }
 
   const compiled = compile(cssEntryArray);
-  const now = _now || new Date();
+  const now = isSsr() ? _now : new Date();
   const totalMinutes = now.getHours() * 60 + now.getMinutes();
 
   // Helper to evaluate time conditions for rules that matched a date condition
