@@ -84,7 +84,8 @@ export function compile(rules) {
     }
 
     const parsedMinutes = rule.time != null ? parseTime(rule.time) : null;
-    const compiledRule = parsedMinutes !== null ? { ...rule, _minutes: parsedMinutes } : rule;
+    const compiledRule =
+      parsedMinutes !== null ? { ...rule, _minutes: parsedMinutes } : rule;
 
     // If date and time together
     if (rule.date != null && rule.time != null) {
@@ -140,7 +141,11 @@ export function compile(rules) {
 }
 
 export function auto(cssEntryArray, fallback = "", _now) {
-  if (!cssEntryArray || (Array.isArray(cssEntryArray) && cssEntryArray.length === 0)) {
+  if (
+    !cssEntryArray ||
+    (Array.isArray(cssEntryArray) && cssEntryArray.length === 0) ||
+    isSsr()
+  ) {
     return fallback;
   }
 
