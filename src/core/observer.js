@@ -73,11 +73,19 @@ export function observe(config) {
         // Remove previous inline styles
         if (typeof previousStyle === 'object' && previousStyle !== null) {
           for (const key of Object.keys(previousStyle)) {
-            el.style.removeProperty(key);
+            if (key.startsWith('--')) {
+              el.style.removeProperty(key);
+            } else {
+              el.style[key] = '';
+            }
           }
         }
         for (const [key, value] of Object.entries(nextStyle)) {
-          el.style.setProperty(key, value);
+          if (key.startsWith('--')) {
+            el.style.setProperty(key, value);
+          } else {
+            el.style[key] = value;
+          }
         }
       }
       previousStyle = nextStyle;
