@@ -25,7 +25,7 @@ import {
  *   4. Time-of-day match
  *   5. Fallback
  *
- * @param {Array<import('../types/index.js').AutoRule>} rules - Array of rule objects
+ * @param {Array<import('../types/index.js').AutoRule>} cssEntryArray - Array of rule objects
  * @param {string | object} [fallback=''] - Default style when no rule matches
  * @param {Date} [_now] - Internal: override current date for testing
  * @returns {string | object} The matching style value
@@ -139,12 +139,12 @@ export function compile(rules) {
   };
 }
 
-export function auto(rulesInput, fallback = "", _now) {
-  if (!rulesInput || (Array.isArray(rulesInput) && rulesInput.length === 0)) {
+export function auto(cssEntryArray, fallback = "", _now) {
+  if (!cssEntryArray || (Array.isArray(cssEntryArray) && cssEntryArray.length === 0)) {
     return fallback;
   }
 
-  const compiled = compile(rulesInput);
+  const compiled = compile(cssEntryArray);
   const now = _now || new Date();
   const totalMinutes = now.getHours() * 60 + now.getMinutes();
 

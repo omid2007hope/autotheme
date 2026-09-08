@@ -103,12 +103,12 @@ export interface UseAutoThemeOptions {
  * Evaluate an array of rules against the current local time and return
  * the matching style.
  *
- * @param rules - Array of rule objects
+ * @param cssEntryArray - Array of rule objects
  * @param fallback - Default style when no rule matches
  * @returns The matching style value (string or object)
  */
 export declare function auto(
-  rules: AutoRule[],
+  cssEntryArray: AutoRule[],
   fallback?: string | Record<string, string>
 ): string | Record<string, string>;
 
@@ -116,11 +116,11 @@ export declare function auto(
  * Inject CSS custom properties into a target element based on
  * the current time/date.
  *
- * @param rules - Array of variable rules
+ * @param cssEntryArray - Array of variable rules
  * @param target - Target element (defaults to document.documentElement)
  */
 export declare function autoVars(
-  rules: AutoVarRule[],
+  cssEntryArray: AutoVarRule[],
   target?: HTMLElement
 ): void;
 

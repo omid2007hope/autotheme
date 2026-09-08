@@ -27,7 +27,7 @@ import { compile } from "../core/engine.js";
  * target element. Removes properties from the previous match before
  * applying the new set.
  *
- * @param {AutoVarRule[]} rulesInput - Array of variable rules or a compiled rule object
+ * @param {AutoVarRule[]} cssEntryArray - Array of variable rules or a compiled rule object
  * @param {HTMLElement} [target] - Target element (defaults to `document.documentElement`)
  *
  * @example
@@ -36,14 +36,14 @@ import { compile } from "../core/engine.js";
  *   { time: 18, vars: { '--bg': '#0f172a', '--text': '#e2e8f0' } },
  * ]);
  */
-export function autoVars(rulesInput, target, _now) {
+export function autoVars(cssEntryArray, target, _now) {
   if (isSsr()) return;
 
   const el = target || document.documentElement;
   const now = _now || new Date();
   const totalMinutes = now.getHours() * 60 + now.getMinutes();
 
-  const compiled = compile(rulesInput);
+  const compiled = compile(cssEntryArray);
 
   const evaluateTimeMatches = (matchedRules) => {
     if (matchedRules.length === 0) return null;
