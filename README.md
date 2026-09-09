@@ -137,13 +137,16 @@ const rules = [
 ```js
 import { autoVars } from "@omid2007hope/autotheme";
 
-autoVars([
+const controller = autoVars([
   { time: 6,  vars: { "--bg": "#fffbeb", "--text": "#78350f", "--radius": "8px" } },
   { time: 18, vars: { "--bg": "#0f172a", "--text": "#e2e8f0", "--radius": "12px" } },
 ]);
+
+// Later, to stop live updates:
+// controller.stop();
 ```
 
-This injects variables directly into `:root`, letting your existing CSS cascade handle the rest.
+This injects variables directly into `:root` and **re-evaluates automatically** on a 60-second interval and on tab visibility changes. Pass an optional third argument to change the interval: `autoVars(rules, target, 30000)`. Returns a `{ stop() }` controller identical in shape to `observe()`.
 
 ### Date & Seasonal Overrides
 
@@ -264,21 +267,23 @@ AutoTheme is fully safe for **Next.js**, **Nuxt**, **Remix**, **Astro**, and any
 
 ## Framework Compatibility
 
-| Framework | Support | Method |
+| Framework | Support | Notes |
 |---|---|---|
-| **React** | ✅ | `auto()` + `useAutoTheme()` hook |
-| **Next.js** | ✅ | SSR-safe, hydrates correctly |
-| **Vue** | ✅ | `auto()` in `:class` bindings |
-| **Svelte** | ✅ | `auto()` in `class:` directives |
-| **Astro** | ✅ | `auto()` in `client:load` components |
+| **React** | ✅ | `auto()` inline + `useAutoTheme()` hook for live re-renders |
+| **Next.js** | ✅ | SSR-safe — returns fallback on the server, real theme on the client |
+| **Vue** | ✅ | Works — pass the returned string to your `:class` binding |
+| **Svelte** | ✅ | Works — pass the returned string to your `class:` directive |
+| **Astro** | ✅ | Works client-side in `client:load` components |
 | **Vanilla JS** | ✅ | `auto()` + `observe()` DOM observer |
 | **HTML5** | ✅ | `<script type="module">` import |
 
-| CSS Framework | Support |
-|---|---|
-| **Tailwind CSS** | ✅ Full class swapping |
-| **Bootstrap** | ✅ Full class swapping |
-| **Standard CSS** | ✅ Inline styles + CSS variables |
+> **Note:** AutoTheme has no Vue plugin, Svelte store, Next.js adapter, or Astro integration. Its zero-dependency design means you wire the returned string into your framework's class-binding syntax directly — which is exactly one line of code.
+
+| CSS Framework | Support | Notes |
+|---|---|---|
+| **Tailwind CSS** | ✅ | Write Tailwind class names in your `style` fields |
+| **Bootstrap** | ✅ | Write Bootstrap class names in your `style` fields |
+| **Standard CSS** | ✅ | Inline style objects + CSS variables via `autoVars()` |
 
 ---
 

@@ -25,8 +25,8 @@ import {
  *   4. Time-of-day match
  *   5. Fallback
  *
- * @param {Array<import('../types/index.js').AutoRule>} cssEntryArray - Array of rule objects
- * @param {string | object} [fallback=''] - Default style when no rule matches
+ * @param {Array<import('../types/index.js').AutoRule>} cssEntryArray - Array of css objects
+ * @param {string | object} [fallback=''] - Default style when no css matches
  * @param {Date} [_now] - Internal: override current date for testing
  * @returns {string | object} The matching style value
  *
@@ -56,9 +56,9 @@ import {
  * @param {Array<import('../types/index.js').AutoRule>} rules
  * @returns {object} Compiled rules structure
  */
-export function compile(rules) {
-  if (!Array.isArray(rules)) {
-    if (rules && rules.__compiled) return rules;
+export function compile(cssStyle) {
+  if (!Array.isArray(cssStyle)) {
+    if (cssStyle && cssStyle.__compiled) return cssStyle;
     return {
       __compiled: true,
       exactOneOff: [],
@@ -75,55 +75,83 @@ export function compile(rules) {
   const timeRules = [];
   const allVarKeys = new Set();
 
-  for (const rule of rules) {
+  for (const css of cssStyle) {
     // Extract var keys for css-vars.js optimization
-    if (rule.vars) {
-      for (const key of Object.keys(rule.vars)) {
+    if (css.vars) {
+      for (const key of Object.keys(css.vars)) {
         allVarKeys.add(key);
       }
     }
 
-    const parsedMinutes = rule.time != null ? parseTime(rule.time) : null;
+    const parsedMinutes = css.time != null ? parseTime(css.time) : null;
     const compiledRule =
-      parsedMinutes !== null ? { ...rule, _minutes: parsedMinutes } : rule;
+      parsedMinutes !== null ? { ...css, _minutes: parsedMinutes } : css;
 
     // If date and time together
-    if (rule.date != null && rule.time != null) {
-      const dateStr = String(rule.date);
+    if (css.date != null && css.time != null) {
+      const dateStr = String(css.date);
       const isValidDate = dateStr.length >= 4 && dateStr.length <= 10;
 
-      if (isValidDate && parsedMinutes !== null) {
-        const parts = dateStr.split("-");
-        if (parts.length === 3) {
-          exactOneOff.push(compiledRule);
-        } else {
-          exactRecurring.push(compiledRule);
-        }
+      if (!isValidDate) {
+        console.warn('[autotheme] compile(): rule ignored — invalid date string (length must be 4–10 chars)', css);
+        continue;
+      }
+      if (parsedMinutes === null) {
+        console.warn('[autotheme] compile(): rule ignored — invalid time value (must be 0–23 or "HH:MM")', css);
+        continue;
+      }
+
+      const parts = dateStr.split("-");
+      if (parts.length === 3) {
+        exactOneOff.push(compiledRule);
+      } else {
+        exactRecurring.push(compiledRule);
       }
     }
     // If only date
-    else if (rule.date != null) {
-      const dateStr = String(rule.date);
+    else if (css.date != null) {
+      const dateStr = String(css.date);
       const isValidDate = dateStr.length >= 4 && dateStr.length <= 10;
 
-      if (isValidDate) {
-        const parts = dateStr.split("-");
-        if (parts.length === 3) {
-          exactOneOff.push(compiledRule);
-        } else {
-          exactRecurring.push(compiledRule);
-        }
+      if (!isValidDate) {
+        console.warn('[autotheme] compile(): rule ignored — invalid date string (length must be 4–10 chars)', css);
+        continue;
       }
+
+      const parts = dateStr.split("-");
+      if (parts.length === 3) {
+        exactOneOff.push(compiledRule);
+      } else {
+        exactRecurring.push(compiledRule);
+      }
+    }
+    // If date range + time together (composite rule) — must check BEFORE lone time branch
+    else if (css.since != null && css.until != null && css.time != null) {
+      if (parsedMinutes === null) {
+        console.warn('[autotheme] compile(): rule ignored — invalid time value (must be 0–23 or "HH:MM")', css);
+        continue;
+      }
+      dateRanges.push(compiledRule);
     }
     // If only time
-    else if (rule.time != null) {
-      if (parsedMinutes !== null) {
-        timeRules.push(compiledRule);
+    else if (css.time != null) {
+      if (parsedMinutes === null) {
+        console.warn('[autotheme] compile(): rule ignored — invalid time value (must be 0–23 or "HH:MM")', css);
+        continue;
       }
+      timeRules.push(compiledRule);
     }
-    // If only range
-    else if (rule.since != null && rule.until != null) {
+    // If only range (since + until, no time)
+    else if (css.since != null && css.until != null) {
       dateRanges.push(compiledRule);
+    }
+    // since without until, or until without since — invalid
+    else if (css.since != null || css.until != null) {
+      console.warn('[autotheme] compile(): rule ignored — "since" and "until" must both be present', css);
+    }
+    // No recognisable keys — warn and skip
+    else {
+      console.warn('[autotheme] compile(): rule ignored — no valid keys (date, time, since/until) found', css);
     }
   }
 
@@ -144,7 +172,7 @@ export function auto(cssEntryArray, fallback = "", _now) {
   if (
     !cssEntryArray ||
     (Array.isArray(cssEntryArray) && cssEntryArray.length === 0) ||
-    isSsr()
+    (!_now && isSsr())
   ) {
     return fallback;
   }
@@ -153,11 +181,13 @@ export function auto(cssEntryArray, fallback = "", _now) {
   const now = _now || new Date();
   const totalMinutes = now.getHours() * 60 + now.getMinutes();
 
-  // Helper to evaluate time conditions for rules that matched a date condition
+  // Helper to evaluate time conditions for rules that matched a date condition.
+  // Returns the matched rule object, or null if nothing matched.
+  // This lets callers distinguish "no match" (null) from "matched with falsy style".
   const evaluateTimeMatches = (matchedRules) => {
     if (matchedRules.length === 0) return null;
 
-    // If any rule has a time condition, we must evaluate them together
+    // If any css has a time condition, we must evaluate them together
     const hasTimeRule = matchedRules.some((r) => r.time != null);
     if (hasTimeRule) {
       // Treat rules without a time condition as active from midnight (time: 0)
@@ -166,37 +196,36 @@ export function auto(cssEntryArray, fallback = "", _now) {
       );
       // Sort locally since utils getMatchingTimeRule no longer sorts
       normalizedTimeRules.sort((a, b) => b._minutes - a._minutes);
-      const bestMatch = getMatchingTimeRule(normalizedTimeRules, totalMinutes);
-      return bestMatch ? bestMatch.style : null;
+      return getMatchingTimeRule(normalizedTimeRules, totalMinutes); // rule | null
     }
 
-    return matchedRules[0].style;
+    return matchedRules[0]; // rule object
   };
 
   // Priority 1: One-off exact date (YYYY-MM-DD)
   const matchedOneOffs = compiled.exactOneOff.filter((r) =>
     isExactDateMatch(r, now),
   );
-  const oneOffStyle = evaluateTimeMatches(matchedOneOffs);
-  if (oneOffStyle) return oneOffStyle;
+  const oneOffRule = evaluateTimeMatches(matchedOneOffs);
+  if (oneOffRule != null) return oneOffRule.style;
 
   // Priority 2: Recurring exact date (MM-DD)
   const matchedRecurring = compiled.exactRecurring.filter((r) =>
     isExactDateMatch(r, now),
   );
-  const recurringStyle = evaluateTimeMatches(matchedRecurring);
-  if (recurringStyle) return recurringStyle;
+  const recurringRule = evaluateTimeMatches(matchedRecurring);
+  if (recurringRule != null) return recurringRule.style;
 
   // Priority 3: Date ranges (since/until)
   const matchedRanges = compiled.dateRanges.filter((r) =>
     isInDateRange(r, now),
   );
-  const rangeStyle = evaluateTimeMatches(matchedRanges);
-  if (rangeStyle) return rangeStyle;
+  const rangeRule = evaluateTimeMatches(matchedRanges);
+  if (rangeRule != null) return rangeRule.style;
 
   // Priority 4: Time-of-day
   const matchedTime = getMatchingTimeRule(compiled.timeRules, totalMinutes);
-  if (matchedTime) {
+  if (matchedTime != null) {
     return matchedTime.style;
   }
 

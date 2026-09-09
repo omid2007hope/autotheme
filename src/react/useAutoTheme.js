@@ -19,7 +19,7 @@ import { auto, compile } from '../core/engine.js';
  * @returns {string | object} The currently active style
  *
  * @example
- * import { useAutoTheme } from 'autotheme/react';
+ * import { useAutoTheme } from '@omid2007hope/autotheme/react';
  *
  * const rules = [
  *   { time: 6,  style: 'bg-white text-black' },

@@ -5,6 +5,6 @@
  * @module autotheme
  */
 
-export { auto } from './core/engine.js';
+export { auto, compile } from './core/engine.js';
 export { autoVars } from './adapters/css-vars.js';
 export { observe } from './core/observer.js';
