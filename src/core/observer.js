@@ -8,7 +8,7 @@
 
 import { auto, compile } from './engine.js';
 import { applyClasses } from '../adapters/dom.js';
-import { isSsr } from './utils.js';
+
 
 /**
  * Start observing time changes and automatically apply the matching theme
@@ -35,9 +35,7 @@ import { isSsr } from './utils.js';
  * observer.stop();
  */
 export function observe(config) {
-  if (isSsr()) {
-    return { stop() {} };
-  }
+
 
   const {
     target,
@@ -47,7 +45,7 @@ export function observe(config) {
   } = config;
 
   const el = typeof target === 'string'
-    ? document.querySelector(target)
+    ? (typeof document !== 'undefined' ? document.querySelector(target) : null)
     : target;
 
   if (!el) {
@@ -105,17 +103,21 @@ export function observe(config) {
 
   // Re-evaluate when the user returns to the tab
   const onVisibility = () => {
-    if (document.visibilityState === 'visible') {
+    if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
       tick();
     }
   };
-  document.addEventListener('visibilitychange', onVisibility);
+  if (typeof document !== 'undefined') {
+    document.addEventListener('visibilitychange', onVisibility);
+  }
 
   return {
     stop() {
       clearTimeout(timeoutId);
       if (intervalId) clearInterval(intervalId);
-      document.removeEventListener('visibilitychange', onVisibility);
+      if (typeof document !== 'undefined') {
+        document.removeEventListener('visibilitychange', onVisibility);
+      }
     },
   };
 }

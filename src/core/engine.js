@@ -11,7 +11,7 @@ import {
   isInDateRange,
   getMatchingTimeRule,
   parseTime,
-  isSsr,
+
 } from "./utils.js";
 
 /**
@@ -171,8 +171,7 @@ export function compile(cssStyle) {
 export function auto(cssEntryArray, fallback = "", _now) {
   if (
     !cssEntryArray ||
-    (Array.isArray(cssEntryArray) && cssEntryArray.length === 0) ||
-    (!_now && isSsr())
+    (Array.isArray(cssEntryArray) && cssEntryArray.length === 0)
   ) {
     return fallback;
   }

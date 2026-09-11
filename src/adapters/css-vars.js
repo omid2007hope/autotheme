@@ -7,7 +7,7 @@
  */
 
 import {
-  isSsr,
+
   isInDateRange,
   isExactDateMatch,
   getMatchingTimeRule,
@@ -43,9 +43,8 @@ import { compile } from "../core/engine.js";
  * controller.stop();
  */
 export function autoVars(cssEntryArray, target, interval = 60000) {
-  if (isSsr()) return { stop() {} };
-
-  const el = target || document.documentElement;
+  const el = target || (typeof document !== 'undefined' ? document.documentElement : null);
+  if (!el) return { stop() {} };
   const compiled = compile(cssEntryArray);
 
   const evaluateTimeMatches = (matchedRules, totalMinutes) => {
@@ -115,17 +114,21 @@ export function autoVars(cssEntryArray, target, interval = 60000) {
 
   // Re-evaluate when the user returns to the tab
   const onVisibility = () => {
-    if (document.visibilityState === 'visible') {
+    if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
       tick();
     }
   };
-  document.addEventListener('visibilitychange', onVisibility);
+  if (typeof document !== 'undefined') {
+    document.addEventListener('visibilitychange', onVisibility);
+  }
 
   return {
     stop() {
       clearTimeout(timeoutId);
       if (intervalId) clearInterval(intervalId);
-      document.removeEventListener('visibilitychange', onVisibility);
+      if (typeof document !== 'undefined') {
+        document.removeEventListener('visibilitychange', onVisibility);
+      }
     },
   };
 }
