@@ -25,7 +25,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/index.js src/react/useAutoTheme.js --format cjs,esm --dts --clean",
+    "build": "tsup src/index.js src/react/useAutoTheme.js --format cjs,esm --clean && node -e \"const fs=require('fs');fs.copyFileSync('src/types/index.d.ts','dist/index.d.ts');fs.mkdirSync('dist/react',{recursive:true});fs.copyFileSync('src/types/index.d.ts','dist/react/useAutoTheme.d.ts')\"",
     "test": "node --test tests/*.test.js",
     "prepublishOnly": "npm run test && npm run build"
   },
