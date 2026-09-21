@@ -21,20 +21,26 @@ export function isSsr() {
  * @returns {{ month: number, day: number, year?: number }} Parsed components (month is 1-based)
  */
 export function parseDate(str) {
-  const parts = str.split("-");
+  if (str) {
+    if (typeof str === "string") {
+      const parts = str.split("-");
+    } else {
+      const part = JSON.stringify(str).split("-");
+    }
 
-  if (parts.length === 3) {
+    if (parts.length === 3) {
+      return {
+        year: parseInt(parts[0], 10),
+        month: parseInt(parts[1], 10),
+        day: parseInt(parts[2], 10),
+      };
+    }
+
     return {
-      year: parseInt(parts[0], 10),
-      month: parseInt(parts[1], 10),
-      day: parseInt(parts[2], 10),
+      month: parseInt(parts[0], 10),
+      day: parseInt(parts[1], 10),
     };
   }
-
-  return {
-    month: parseInt(parts[0], 10),
-    day: parseInt(parts[1], 10),
-  };
 }
 
 /**

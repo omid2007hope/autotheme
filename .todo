@@ -64,8 +64,8 @@
   - `compile()` crashes on `[condition && { time: 6 }]` when `condition` is falsy (`TypeError: Cannot read properties of null (reading 'vars')`).
   - `parseDate()` crashes with `str.split is not a function` if numbers or non-strings are provided.
 - **Action Plan:**
-  - [ ] Add guard in `compile()`: `if (!css || typeof css !== 'object') continue;`.
-  - [ ] Safely cast and validate strings in `parseDate()` before calling `.split('-')`.
+  - [x] Add guard in `compile()`: `if (!css || typeof css !== 'object') continue;`.
+  - [x] Safely cast and validate strings in `parseDate()` before calling `.split('-')`.
   - [ ] Add regression tests in `tests/bugfix.test.js`.
 
 ---

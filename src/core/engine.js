@@ -11,7 +11,6 @@ import {
   isInDateRange,
   getMatchingTimeRule,
   parseTime,
-
 } from "./utils.js";
 
 /**
@@ -76,6 +75,11 @@ export function compile(cssStyle) {
   const allVarKeys = new Set();
 
   for (const css of cssStyle) {
+    // safety guard
+    if (!css || typeof css !== "object") {
+      continue;
+    }
+
     // Extract var keys for css-vars.js optimization
     if (css.vars) {
       for (const key of Object.keys(css.vars)) {
@@ -93,11 +97,17 @@ export function compile(cssStyle) {
       const isValidDate = dateStr.length >= 4 && dateStr.length <= 10;
 
       if (!isValidDate) {
-        console.warn('[autotheme] compile(): rule ignored — invalid date string (length must be 4–10 chars)', css);
+        console.warn(
+          "[autotheme] compile(): rule ignored — invalid date string (length must be 4–10 chars)",
+          css,
+        );
         continue;
       }
       if (parsedMinutes === null) {
-        console.warn('[autotheme] compile(): rule ignored — invalid time value (must be 0–23 or "HH:MM")', css);
+        console.warn(
+          '[autotheme] compile(): rule ignored — invalid time value (must be 0–23 or "HH:MM")',
+          css,
+        );
         continue;
       }
 
@@ -114,7 +124,10 @@ export function compile(cssStyle) {
       const isValidDate = dateStr.length >= 4 && dateStr.length <= 10;
 
       if (!isValidDate) {
-        console.warn('[autotheme] compile(): rule ignored — invalid date string (length must be 4–10 chars)', css);
+        console.warn(
+          "[autotheme] compile(): rule ignored — invalid date string (length must be 4–10 chars)",
+          css,
+        );
         continue;
       }
 
@@ -128,7 +141,10 @@ export function compile(cssStyle) {
     // If date range + time together (composite rule) — must check BEFORE lone time branch
     else if (css.since != null && css.until != null && css.time != null) {
       if (parsedMinutes === null) {
-        console.warn('[autotheme] compile(): rule ignored — invalid time value (must be 0–23 or "HH:MM")', css);
+        console.warn(
+          '[autotheme] compile(): rule ignored — invalid time value (must be 0–23 or "HH:MM")',
+          css,
+        );
         continue;
       }
       dateRanges.push(compiledRule);
@@ -136,7 +152,10 @@ export function compile(cssStyle) {
     // If only time
     else if (css.time != null) {
       if (parsedMinutes === null) {
-        console.warn('[autotheme] compile(): rule ignored — invalid time value (must be 0–23 or "HH:MM")', css);
+        console.warn(
+          '[autotheme] compile(): rule ignored — invalid time value (must be 0–23 or "HH:MM")',
+          css,
+        );
         continue;
       }
       timeRules.push(compiledRule);
@@ -147,11 +166,17 @@ export function compile(cssStyle) {
     }
     // since without until, or until without since — invalid
     else if (css.since != null || css.until != null) {
-      console.warn('[autotheme] compile(): rule ignored — "since" and "until" must both be present', css);
+      console.warn(
+        '[autotheme] compile(): rule ignored — "since" and "until" must both be present',
+        css,
+      );
     }
     // No recognisable keys — warn and skip
     else {
-      console.warn('[autotheme] compile(): rule ignored — no valid keys (date, time, since/until) found', css);
+      console.warn(
+        "[autotheme] compile(): rule ignored — no valid keys (date, time, since/until) found",
+        css,
+      );
     }
   }
 
