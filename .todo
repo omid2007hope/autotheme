@@ -1,257 +1,176 @@
-Listed directory autotheme
-Listed directory src
-Listed directory core
-Listed directory adapters
-Listed directory react
-Listed directory types
-Listed directory tests
-Listed directory examples
-Listed directory html-css-vars
-Listed directory html-tailwind
-Listed directory .github
-Listed directory workflows
-Listed directory dist
-Viewed package.json:1-59
-Viewed tsconfig.json:1-19
-Viewed .gitignore:1-8
-Viewed .npmignore:1-10
-Viewed LICENSE:1-22
-Viewed publish.yml:1-37
-Viewed README.md:1-313
-Viewed ROADMAP.md:1-311
-Viewed index.js:1-11
-Viewed engine.js:1-234
-Viewed observer.js:1-124
-Viewed utils.js:1-146
-Viewed css-vars.js:1-135
-Viewed dom.js:1-34
-Viewed useAutoTheme.js:1-96
-Viewed index.d.ts:1-150
-Viewed bugfix.test.js:1-192
-Viewed engine.test.js:1-238
-Viewed integration.test.js:1-146
-Viewed neo-noir.test.js:1-125
-Viewed ssr-rendering.test.js:1-65
-Viewed utils.test.js:1-152
-Viewed index.html:1-72
-Viewed index.html:1-52
-Ran command: `npm test`
-Ran command: `npm run build`
-Used tool: manage_task
-Viewed useAutoTheme.d.ts:1-30
-Viewed index.d.ts:1-135
-Viewed index.d-CYzGJWka.d.ts:1-53
-Viewed useAutoTheme.js:1-15
+# AutoTheme — Production Release & SaaS Roadmap TODO
 
-# Comprehensive Project Architecture Audit & Prioritized Findings
-
-Every file, line, and configuration in the codebase was inspected line-by-line across `src/`, `tests/`, `examples/`, `.github/`, and root configuration files. Below is the complete prioritized audit ranging from critical release blockers to SaaS enhancements.
+> **Target:** High-Quality, Zero-Dependency, Production-Grade npm & SaaS Package  
+> **Progress:** `0 / 16` Tasks Completed (`0%`)
 
 ---
 
-## 1. Findings (Prioritized from Highest to Lowest)
+## 📊 Task Status Matrix
+
+| ID | Priority | Category | Task | Target Files | Status |
+|:---|:---|:---|:---|:---|:---:|
+| **T01** | `P0` Critical | Release / CI | Fix scoped npm publishing failure (`HTTP 402`) | [`package.json`](file:///c:/Users/Omid/X/Code/autotheme/package.json), [`publish.yml`](file:///c:/Users/Omid/X/Code/autotheme/.github/workflows/publish.yml) | ⏳ Pending |
+| **T02** | `P0` Critical | Types / Build | Restore full TypeScript declarations in `dist/` | [`package.json`](file:///c:/Users/Omid/X/Code/autotheme/package.json), [`src/types/index.d.ts`](file:///c:/Users/Omid/X/Code/autotheme/src/types/index.d.ts) | ⏳ Pending |
+| **T03** | `P0` Critical | Stability | Prevent unhandled crashes on `null` rules & non-string dates | [`src/core/engine.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js), [`src/core/utils.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/utils.js) | ⏳ Pending |
+| **T04** | `P1` High | Engine / Bug | Validate `parseTime` ranges (fix 24/7 rule takeover) | [`src/core/utils.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/utils.js) | ⏳ Pending |
+| **T05** | `P1` High | Engine / Bug | Fix date+time composite rule wrap-around bug | [`src/core/engine.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js) | ⏳ Pending |
+| **T06** | `P1` High | React / RSC | Add `"use client";` directive to `@omid2007hope/autotheme/react` | [`src/react/useAutoTheme.js`](file:///c:/Users/Omid/X/Code/autotheme/src/react/useAutoTheme.js) | ⏳ Pending |
+| **T07** | `P1` High | SSR / React | Resolve SSR hydration mismatch & reconcile README | [`src/react/useAutoTheme.js`](file:///c:/Users/Omid/X/Code/autotheme/src/react/useAutoTheme.js), [`README.md`](file:///c:/Users/Omid/X/Code/autotheme/README.md) | ⏳ Pending |
+| **T08** | `P2` Medium | Performance | Eliminate `JSON.stringify` on every component render | [`src/react/useAutoTheme.js`](file:///c:/Users/Omid/X/Code/autotheme/src/react/useAutoTheme.js) | ⏳ Pending |
+| **T09** | `P2` Medium | Architecture | Deduplicate rule evaluation logic in `css-vars.js` | [`src/adapters/css-vars.js`](file:///c:/Users/Omid/X/Code/autotheme/src/adapters/css-vars.js), [`src/core/engine.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js) | ⏳ Pending |
+| **T10** | `P2` Medium | Examples | Remove duplicate `setInterval` leak in `html-css-vars` demo | [`examples/html-css-vars/index.html`](file:///c:/Users/Omid/X/Code/autotheme/examples/html-css-vars/index.html) | ⏳ Pending |
+| **T11** | `P2` Medium | Edge Case | Fallback properly when matched rule has no `style` | [`src/core/engine.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js) | ⏳ Pending |
+| **T12** | `P3` Low | Metadata | Add standard `package.json` fields (`repository`, `sideEffects`, `engines`) | [`package.json`](file:///c:/Users/Omid/X/Code/autotheme/package.json) | ⏳ Pending |
+| **T13** | `P3` Low | DevOps | Create CI workflow (`ci.yml`) for PRs and pushes | [`.github/workflows/ci.yml`](file:///c:/Users/Omid/X/Code/autotheme/.github/workflows) | ⏳ Pending |
+| **T14** | `P3` Low | Docs | Correct README license badge from `LICENSE-CUSTOM` to `LICENSE-MIT` | [`README.md`](file:///c:/Users/Omid/X/Code/autotheme/README.md) | ⏳ Pending |
+| **T15** | `P3` Low | DOM Cleanup | Implement clean DOM teardown in `observe().stop()` & `autoVars().stop()` | [`src/core/observer.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/observer.js), [`src/adapters/css-vars.js`](file:///c:/Users/Omid/X/Code/autotheme/src/adapters/css-vars.js) | ⏳ Pending |
+| **T16** | `P3` Low | Feature | Add day-of-week rule support (`day: 'friday' \| [1, 5]`) | [`src/core/engine.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js), [`src/types/index.d.ts`](file:///c:/Users/Omid/X/Code/autotheme/src/types/index.d.ts) | ⏳ Pending |
 
 ---
 
-### [P0 - CRITICAL] Release Blockers & Runtime Crashes
+## 🔴 P0 — Critical (Release Blockers & Runtime Crashes)
 
-#### 1. Scoped Package Publishing Failure (HTTP 402 on `npm publish`)
-
+### [ ] T01: Fix Scoped Package Publishing Failure (HTTP 402)
 - **Files:** [`package.json:2`](file:///c:/Users/Omid/X/Code/autotheme/package.json#L2), [`.github/workflows/publish.yml:34`](file:///c:/Users/Omid/X/Code/autotheme/.github/workflows/publish.yml#L34)
-- **Problem:** Package name is scoped (`@omid2007hope/autotheme`). By default, npm treats scoped packages as private. In `.github/workflows/publish.yml`, line 34 executes `npm publish` without `--access public`, and `package.json` is missing `"publishConfig": { "access": "public" }`.
-- **Impact:** Any automated or manual publish to npm will fail immediately with `npm error 402 Payment Required` (requires paid npm organization for private packages).
-- **Fix:** Add `"publishConfig": { "access": "public" }` to `package.json` and `--access public` to `.github/workflows/publish.yml`.
+- **Problem:** Scoped packages (`@omid2007hope/*`) default to private access on npm. Without explicit public configuration, `npm publish` fails with `402 Payment Required`.
+- **Action Plan:**
+  - [ ] Add `"publishConfig": { "access": "public" }` to `package.json`.
+  - [ ] Add `run: npm publish --access public` to `.github/workflows/publish.yml`.
 
 ---
 
-#### 2. TypeScript Types Degraded to `any` in Published Bundle
-
+### [ ] T02: Restore Full TypeScript Declarations in Distribution Bundle
 - **Files:** [`package.json:25`](file:///c:/Users/Omid/X/Code/autotheme/package.json#L25), [`src/types/index.d.ts`](file:///c:/Users/Omid/X/Code/autotheme/src/types/index.d.ts), [`dist/index.d.ts:132`](file:///c:/Users/Omid/X/Code/autotheme/dist/index.d.ts#L132)
-- **Problem:** `package.json` specifies `"build": "tsup src/index.js src/react/useAutoTheme.js --format cjs,esm --dts --clean"`. Because `tsup` generates declarations from `.js` files with partial JSDoc, it overwrites `dist/index.d.ts` with:
-  ```ts
-  declare function auto(
-    cssEntryArray: any,
-    fallback: string | undefined,
-    _now: any,
-  ): any;
-  declare function compile(cssStyle: any): object;
-  ```
-  The handcrafted types in [`src/types/index.d.ts`](file:///c:/Users/Omid/X/Code/autotheme/src/types/index.d.ts) are completely ignored during build and packaging.
-- **Furthermore, [`src/types/index.d.ts`](file:///c:/Users/Omid/X/Code/autotheme/src/types/index.d.ts):**
-  - Defines `time?: number` only (omits `string` like `"18:30"`, which is supported by code).
-  - Missing `compile()` export declaration.
-  - Declares `autoVars` as returning `void` instead of `{ stop(): void }`.
-  - Missing `interval` parameter in `autoVars`.
-- **Impact:** Any TypeScript consumer installing the package receives `any` types for `auto()`, destroying type safety and developer experience.
+- **Problem:** `tsup` generates types from JavaScript files with incomplete JSDoc, overwriting `dist/index.d.ts` with `auto(..., any): any`. The handcrafted types in `src/types/index.d.ts` are dropped.
+- **Action Plan:**
+  - [ ] Update `src/types/index.d.ts`:
+    - Allow `string` for `time` in `AutoRule` and `AutoVarRule` (e.g. `"18:30"`).
+    - Declare `compile(rules: AutoRule[]): CompiledRules`.
+    - Fix `autoVars` return type to `{ stop(): void }` and add `interval?: number`.
+    - Support generic style payloads `<T = string | Record<string, string>>`.
+  - [ ] Ensure `tsup` build bundles or preserves the full type definitions from `src/types/index.d.ts`.
 
 ---
 
-#### 3. Unhandled Runtime Crashes on `null` Rules & Non-String Dates
-
+### [ ] T03: Prevent Unhandled Crashes on `null` Rules & Non-String Dates
 - **Files:** [`src/core/engine.js:78-84`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js#L78-L84), [`src/core/utils.js:23-24`](file:///c:/Users/Omid/X/Code/autotheme/src/core/utils.js#L23-L24)
 - **Problem:**
-  1. In `compile()`: `for (const css of cssStyle) { if (css.vars) { ... } }`. If an array element is `null` or `undefined` (e.g. conditional rendering `rules = [condition && { time: 6, ... }]`), accessing `css.vars` throws `TypeError: Cannot read properties of null (reading 'vars')`.
-  2. In `parseDate(str)`: `const parts = str.split("-")`. If someone passes non-string values (e.g. numbers `{ date: 1031 }` or `{ since: 1201 }`), it immediately throws `TypeError: str.split is not a function`.
-- **Impact:** Production client or server crashes on common dynamic rule inputs.
-- **Fix:** Add defensive validation: `if (!css || typeof css !== 'object') continue;` in `compile()`, and ensure `str` is cast or checked before `.split('-')`.
+  - `compile()` crashes on `[condition && { time: 6 }]` when `condition` is falsy (`TypeError: Cannot read properties of null (reading 'vars')`).
+  - `parseDate()` crashes with `str.split is not a function` if numbers or non-strings are provided.
+- **Action Plan:**
+  - [ ] Add guard in `compile()`: `if (!css || typeof css !== 'object') continue;`.
+  - [ ] Safely cast and validate strings in `parseDate()` before calling `.split('-')`.
+  - [ ] Add regression tests in `tests/bugfix.test.js`.
 
 ---
 
-### [P1 - HIGH] Logic Flaws, Security / Stability Hazards & Framework Breakages
+## 🟠 P1 — High (Logic Flaws, Security / Stability Hazards & Framework Breakages)
 
-#### 4. Time Parser Boundary Bypass & 24/7 Rule Hijack Bug
-
+### [ ] T04: Validate `parseTime` Ranges (Fix 24/7 Rule Takeover)
 - **Files:** [`src/core/utils.js:106-123`](file:///c:/Users/Omid/X/Code/autotheme/src/core/utils.js#L106-L123), [`src/core/utils.js:133-145`](file:///c:/Users/Omid/X/Code/autotheme/src/core/utils.js#L133-L145)
-- **Problem:**
-  1. `parseTime("25:00")`, `parseTime("99:99")`, `parseTime("14:80")` are parsed without range validation (`h < 0 || h > 23 || m < 0 || m > 59`). E.g., `parseTime("25:00")` returns `1500` minutes.
-  2. Because `1500` is higher than any minute of the day (`0..1439`), `timeRules` sorts it to index `0`.
-  3. In `getMatchingTimeRule`: when current time is evaluated, `totalMinutes >= 1500` is never true. The wrap-around fallback executes: `return timeRules[0];`!
-- **Impact:** An invalid time string like `"25:00"` or `"99:00"` stays active **24 hours a day**, completely overriding all other rules.
-- **Fix:** Validate that `h >= 0 && h <= 23 && m >= 0 && m <= 59` in `parseTime()`, returning `null` if out of bounds.
+- **Problem:** Times like `"25:00"` or `"99:99"` parse to minutes > 1439. In `getMatchingTimeRule`, wrap-around fallback promotes this invalid rule to be active 24 hours a day.
+- **Action Plan:**
+  - [ ] In `parseTime()`, strictly validate that `h >= 0 && h <= 23 && m >= 0 && m <= 59`.
+  - [ ] Return `null` and log warning if time is out of valid bounds.
+  - [ ] Add unit test verifying invalid string times do not hijack the theme.
 
 ---
 
-#### 5. Date + Time Composite Rule Wrap-Around Trap
-
-- **Files:** [`src/core/engine.js:186-202`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js#L186-L202), [`tests/bugfix.test.js:102-111`](file:///c:/Users/Omid/X/Code/autotheme/tests/bugfix.test.js#L102-L111)
-- **Problem:**
-  When a rule combines a date/range with a time, such as:
-  ```js
-  { date: '10-31', time: 18, style: 'halloween-party' }
-  ```
-  On October 31 at 10:00 AM (`totalMinutes = 600`):
-  `evaluateTimeMatches` runs `getMatchingTimeRule` on `[{ time: 18, _minutes: 1080 }]`. Because `600 < 1080` and there are no other rules for that date, `getMatchingTimeRule` executes wrap-around: `return timeRules[0]`.
-- **Impact:** `halloween-party` activates at 10:00 AM (and all morning/afternoon) instead of starting at 18:00. Date-scoped time rules wrap around to themselves when alone.
-- **Fix:** If evaluating date-specific time rules and the current time is before the earliest specified rule, it should return `null` (falling back to standard time rules or fallback style) rather than wrapping around to itself.
+### [ ] T05: Fix Date + Time Composite Rule Wrap-Around Bug
+- **Files:** [`src/core/engine.js:186-202`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js#L186-L202)
+- **Problem:** A single rule `{ date: '10-31', time: 18, style: 'party' }` applies `party` all day before 18:00 because `evaluateTimeMatches` wraps around when no other rules exist for that date.
+- **Action Plan:**
+  - [ ] Modify `evaluateTimeMatches`: if time is before the earliest specified rule on that date/range and no midnight rule exists, return `null` so lower-priority time rules or fallback can apply.
+  - [ ] Update tests to verify expected date+time scoping.
 
 ---
 
-#### 6. Missing `"use client";` Directive in React Package
-
-- **Files:** [`src/react/useAutoTheme.js:1`](file:///c:/Users/Omid/X/Code/autotheme/src/react/useAutoTheme.js#L1), [`package.json:15-19`](file:///c:/Users/Omid/X/Code/autotheme/package.json#L15-L19)
-- **Problem:** `@omid2007hope/autotheme/react` exports a React hook using `useState`, `useEffect`, `useRef`. In Next.js (App Router), Remix, and React Server Components (RSC), importing this without a `"use client";` banner causes a build/runtime error:
-  `Error: useState only works in Client Components. Add the "use client" directive at the top of the file to use it.`
-- **Impact:** Incompatible out-of-the-box with modern Next.js 13/14/15 App Router applications.
-- **Fix:** Add `"use client";` at the top of `src/react/useAutoTheme.js` and configure `tsup` banner to preserve it in `dist/react/useAutoTheme.js`.
+### [ ] T06: Add `"use client";` Directive to `@omid2007hope/autotheme/react`
+- **Files:** [`src/react/useAutoTheme.js:1`](file:///c:/Users/Omid/X/Code/autotheme/src/react/useAutoTheme.js#L1), [`package.json:25`](file:///c:/Users/Omid/X/Code/autotheme/package.json#L25)
+- **Problem:** Next.js App Router and React Server Components (RSC) error on import without a `"use client";` boundary banner.
+- **Action Plan:**
+  - [ ] Add `"use client";` at top of `src/react/useAutoTheme.js`.
+  - [ ] Configure `tsup` build banner (`--banner.js '"use client";'`) for the React entry point.
 
 ---
 
-#### 7. SSR Hydration Mismatch & Contradiction between README and Code
-
+### [ ] T07: Resolve SSR Hydration Mismatch & Reconcile README
 - **Files:** [`README.md:258-264`](file:///c:/Users/Omid/X/Code/autotheme/README.md#L258-L264), [`tests/ssr-rendering.test.js:13-22`](file:///c:/Users/Omid/X/Code/autotheme/tests/ssr-rendering.test.js#L13-L22), [`src/react/useAutoTheme.js:59`](file:///c:/Users/Omid/X/Code/autotheme/src/react/useAutoTheme.js#L59)
-- **Problem:**
-  - `README.md` claims: _"When typeof window === 'undefined', the engine returns the fallback value instead of crashing. Server render gets the fallback; client hydration picks the real theme."_
-  - `tests/ssr-rendering.test.js` tests the exact opposite: asserting `auto()` should evaluate rules on SSR and NOT return fallback.
-  - `src/react/useAutoTheme.js` executes `useState(() => evaluate())` during SSR. If the server is in UTC (e.g. Vercel) and the client is in PST, the server renders night-mode HTML while the client hydrates day-mode, triggering React Hydration Mismatch errors.
-- **Fix:** Harmonize documentation and implementation. Provide an explicit SSR option or safe client hydration pattern (e.g., initial fallback render during SSR/hydration, transitioning seamlessly post-hydration).
+- **Problem:** README claims server returns fallback; code evaluates server time. In `useAutoTheme()`, `useState(() => evaluate())` runs on server, causing client hydration mismatch when server and client clocks/timezones differ.
+- **Action Plan:**
+  - [ ] Align `useAutoTheme()` hydration: render fallback on initial SSR mount, then seamlessly sync active theme client-side.
+  - [ ] Reconcile `README.md` and `ssr-rendering.test.js` to define exact, unified SSR behavior.
 
 ---
 
-### [P2 - MEDIUM] Architecture Duplication, Performance & Leaks
+## 🟡 P2 — Medium (Architecture Duplication, Performance & Leaks)
 
-#### 8. Performance Hazard: `JSON.stringify` on Every Component Render
-
+### [ ] T08: Eliminate `JSON.stringify` on Every Component Render
 - **Files:** [`src/react/useAutoTheme.js:41-50`](file:///c:/Users/Omid/X/Code/autotheme/src/react/useAutoTheme.js#L41-L50)
-- **Problem:**
-  ```js
-  if (
-    JSON.stringify(rules) !== JSON.stringify(rulesRef.current) ||
-    !compiledRef.current
-  ) {
-    rulesRef.current = rules;
-    compiledRef.current = compile(rules);
-  }
-  ```
-  `JSON.stringify(rules)` is executed up to twice on **every single render** of the consuming component. If rules arrays are large (such as the 1440-rule Neo-Noir dataset), this blocks the main thread and creates garbage collection churn.
-- **Fix:** Shallow-compare rules arrays or accept pre-compiled rules (`compile(rules)`) outside the component.
+- **Problem:** `JSON.stringify(rules)` runs up to twice per render cycle, creating CPU lag on large rule sets (e.g. 1440-rule minute resolution).
+- **Action Plan:**
+  - [ ] Replace naive `JSON.stringify` with shallow array comparison or accept pre-compiled rules directly.
 
 ---
 
-#### 9. Architecture Duplication: `css-vars.js` Clones Core Engine Logic
-
+### [ ] T09: Deduplicate Rule Evaluation Logic in `css-vars.js`
 - **Files:** [`src/adapters/css-vars.js:50-90`](file:///c:/Users/Omid/X/Code/autotheme/src/adapters/css-vars.js#L50-L90), [`src/core/engine.js:186-230`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js#L186-L230)
-- **Problem:** `autoVars()` copy-pastes the entire rule priority hierarchy (exact one-offs, recurring dates, date ranges, time-of-day, `evaluateTimeMatches`, time normalization) directly from `engine.js`.
-- **Impact:** Any fix, feature, or optimization made to `engine.js` is omitted from `autoVars()`.
-- **Fix:** Refactor `engine.js` to export an internal `resolveMatchedRule(compiled, now)` helper that both `auto()` and `autoVars()` call.
+- **Problem:** ~40 lines of rule matching and priority resolution are copy-pasted between `engine.js` and `css-vars.js`.
+- **Action Plan:**
+  - [ ] Extract `resolveRule(compiled, now)` in `engine.js` and import it in `css-vars.js`.
 
 ---
 
-#### 10. Example Bug: Leaked Timers in `examples/html-css-vars/index.html`
-
+### [ ] T10: Remove Duplicate `setInterval` Leak in `html-css-vars` Demo
 - **Files:** [`examples/html-css-vars/index.html:62-68`](file:///c:/Users/Omid/X/Code/autotheme/examples/html-css-vars/index.html#L62-L68)
-- **Problem:** Line 62 calls `autoVars(rules)` (which starts its own 60s interval). Line 68 adds `setInterval(() => autoVars(rules), 60000);`, repeatedly spawning new intervals every minute without cleanup.
-- **Fix:** Remove the outer `setInterval`.
+- **Problem:** Calling `setInterval(() => autoVars(rules), 60000)` on top of `autoVars()` creates cascading leaked timers.
+- **Action Plan:**
+  - [ ] Remove the redundant outer `setInterval` from the example.
 
 ---
 
-#### 11. Style-less Rules Return `undefined` Instead of Fallback
-
+### [ ] T11: Fallback Properly When Matched Rule Has No `style`
 - **Files:** [`src/core/engine.js:209, 216, 223, 228`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js#L209)
-- **Problem:** If a rule matches but lacks a `style` property (e.g. `{ date: '10-31' }` or a var-only rule `{ time: 6, vars: {...} }` passed to `auto()`), `oneOffRule.style` evaluates to `undefined`, which is returned directly rather than falling back to `fallback`.
-- **Fix:** Check `if (rule != null && rule.style !== undefined) return rule.style;`.
+- **Problem:** If a matched rule lacks a `style` property (e.g. var-only rule passed to `auto()`), `auto()` returns `undefined` instead of `fallback`.
+- **Action Plan:**
+  - [ ] Check `if (rule != null && rule.style !== undefined) return rule.style;`.
 
 ---
 
-### [P3 - LOW / POLISH] Standards, Missing Features & Tooling
+## 🟢 P3 — Low / Polish (Standards, Documentation, CI & Enhancements)
 
-#### 12. Missing Standard `package.json` Metadata
-
+### [ ] T12: Add Standard `package.json` Metadata
 - **Files:** [`package.json`](file:///c:/Users/Omid/X/Code/autotheme/package.json)
-- **Missing Fields:**
-  - `"repository": { "type": "git", "url": "git+https://github.com/omid2007hope/autotheme.git" }`
-  - `"bugs": { "url": "https://github.com/omid2007hope/autotheme/issues" }`
-  - `"homepage": "https://github.com/omid2007hope/autotheme#readme"`
-  - `"sideEffects": false` (enables bundler tree-shaking for Webpack, Vite, Rollup, Next.js)
-  - `"engines": { "node": ">=18.0.0" }`
+- **Action Plan:**
+  - [ ] Add `"repository"` (Git URL).
+  - [ ] Add `"bugs"` and `"homepage"`.
+  - [ ] Add `"sideEffects": false` (enables bundler tree-shaking).
+  - [ ] Add `"engines": { "node": ">=18.0.0" }`.
 
 ---
 
-#### 13. Missing CI Workflow for PRs and Commits
-
-- **Files:** [`.github/workflows/`](file:///c:/Users/Omid/X/Code/autotheme/.github/workflows)
-- **Problem:** Only `publish.yml` exists (triggers solely on release). There is no automated workflow running `npm test` and `npm run build` on pull requests or pushes to `main`.
-
----
-
-#### 14. Inconsistent README License Badge
-
-- **Files:** [`README.md:5`](file:///c:/Users/Omid/X/Code/autotheme/README.md#L5), [`LICENSE`](file:///c:/Users/Omid/X/Code/autotheme/LICENSE)
-- **Problem:** Badge displays `LICENSE-CUSTOM`, whereas the project is licensed under standard MIT.
+### [ ] T13: Create CI Workflow (`ci.yml`) for PRs and Pushes
+- **Files:** [`.github/workflows/ci.yml`](file:///c:/Users/Omid/X/Code/autotheme/.github/workflows)
+- **Action Plan:**
+  - [ ] Create GitHub Actions workflow triggering on `push` to `main` and `pull_request` to run `npm ci`, `npm test`, and `npm run build`.
 
 ---
 
-#### 15. Missing Element Teardown (`destroy()`) in Observers
+### [ ] T14: Correct README License Badge
+- **Files:** [`README.md:5`](file:///c:/Users/Omid/X/Code/autotheme/README.md#L5)
+- **Action Plan:**
+  - [ ] Change badge from `LICENSE-CUSTOM` to `LICENSE-MIT`.
 
+---
+
+### [ ] T15: Implement Clean DOM Teardown in `observe().stop()` & `autoVars().stop()`
 - **Files:** [`src/core/observer.js:114-122`](file:///c:/Users/Omid/X/Code/autotheme/src/core/observer.js#L114-L122), [`src/adapters/css-vars.js:125-133`](file:///c:/Users/Omid/X/Code/autotheme/src/adapters/css-vars.js#L125-L133)
-- **Problem:** When `controller.stop()` is called in single-page applications (SPAs) during route changes, the timers are cleared, but previously applied CSS classes and injected CSS custom properties remain on the DOM element.
+- **Action Plan:**
+  - [ ] Add option/method to restore original classes and remove injected CSS custom properties on `stop()`.
 
 ---
 
-#### 16. Missing Roadmap V1.1 Features (Day-of-Week & Timezones)
-
-- **Roadmap Item:** `ROADMAP.md:71` mentions `day: 'friday'` or `day: [1, 5]`.
-- **SaaS Requirement:** Zero ability to specify target timezone (e.g. `timeZone: 'America/New_York'`) for worldwide uniform campaigns without clients having to mock `Date`.
-
----
-
-## 2. Summary Status Matrix
-
-| Priority | Issue                                                                | Type          | Impact                                     |
-| -------- | -------------------------------------------------------------------- | ------------- | ------------------------------------------ |
-| **P0**   | Scoped package missing `publishConfig.access` / `--access public`    | Config / CI   | Release will fail on npm (HTTP 402)        |
-| **P0**   | `tsup` generates `any` types, dropping `src/types/index.d.ts`        | Types / Build | TypeScript consumers get zero intellisense |
-| **P0**   | Uncaught `TypeError` on `null` rules or non-string date keys         | Stability     | Application crash in common usage          |
-| **P1**   | `parseTime` accepts > 24:00 times, causing 24/7 hijack               | Logic / Bug   | Erroneous rule permanently takes over      |
-| **P1**   | Single date+time composite rule wraps around all day                 | Logic / Bug   | Halloween 6 PM rule activates at 8 AM      |
-| **P1**   | Missing `"use client";` in React entry point                         | Framework     | Incompatible with Next.js App Router       |
-| **P1**   | SSR hydration mismatch & README vs code contradiction                | Architecture  | Next.js hydration warning / layout flash   |
-| **P2**   | `JSON.stringify` on every render in `useAutoTheme`                   | Performance   | Main thread lag on large rule sets         |
-| **P2**   | Rule resolution logic duplicated in `css-vars.js`                    | Architecture  | Logic drift and dual maintenance           |
-| **P2**   | `examples/html-css-vars` duplicate `setInterval`                     | Bug / Example | Memory and timer leaks in demo             |
-| **P2**   | Rule matching without `style` returns `undefined`                    | Edge Case     | Breaks fallback behavior                   |
-| **P3**   | Missing standard `package.json` fields (`repository`, `sideEffects`) | Standards     | Warnings on install, poor SEO/npm metrics  |
-| **P3**   | Missing CI testing workflow on pull requests                         | DevOps        | Untested code can merge unnoticed          |
-| **P3**   | `README.md` badge reads `LICENSE-CUSTOM`                             | Docs          | Confusion about licensing                  |
-| **P3**   | `stop()` does not reset DOM classes/vars                             | Polish / SPA  | Leftover styles on route changes           |
-
-Ready to systematically implement and resolve these items whenever you're ready to proceed.
+### [ ] T16: Add Day-of-Week Rule Support
+- **Files:** [`src/core/engine.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js), [`src/types/index.d.ts`](file:///c:/Users/Omid/X/Code/autotheme/src/types/index.d.ts)
+- **Action Plan:**
+  - [ ] Implement V1.1 Roadmap item: `day: 'friday'` or `day: [1, 5]` (Mon–Fri).
