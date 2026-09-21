@@ -21,26 +21,26 @@ export function isSsr() {
  * @returns {{ month: number, day: number, year?: number }} Parsed components (month is 1-based)
  */
 export function parseDate(str) {
-  if (str) {
-    if (typeof str === "string") {
-      const parts = str.split("-");
-    } else {
-      const part = JSON.stringify(str).split("-");
-    }
+  if (str == null) return;
+  const safeStr = typeof str === "string" ? str : String(str);
+  const parts = safeStr.split("-");
 
-    if (parts.length === 3) {
-      return {
-        year: parseInt(parts[0], 10),
-        month: parseInt(parts[1], 10),
-        day: parseInt(parts[2], 10),
-      };
-    }
-
+  if (parts.length === 3) {
+    return {
+      year: parseInt(parts[0], 10),
+      month: parseInt(parts[1], 10),
+      day: parseInt(parts[2], 10),
+    };
+  }
+  
+  if (parts.length === 2) {
     return {
       month: parseInt(parts[0], 10),
       day: parseInt(parts[1], 10),
     };
   }
+  
+  return undefined;
 }
 
 /**
@@ -52,6 +52,8 @@ export function parseDate(str) {
  */
 export function isExactDateMatch(rule, now) {
   const parsed = parseDate(rule.date);
+  if (!parsed) return false;
+  
   const month = now.getMonth() + 1;
   const day = now.getDate();
 
@@ -77,6 +79,8 @@ export function isExactDateMatch(rule, now) {
 export function isInDateRange(rule, now) {
   const since = parseDate(rule.since);
   const until = parseDate(rule.until);
+  if (!since || !until) return false;
+  
   const year = now.getFullYear();
   const month = now.getMonth() + 1;
   const day = now.getDate();

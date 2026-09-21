@@ -213,7 +213,7 @@ describe("Issue #7/#8: invalid rules emit console.warn", () => {
     assert.ok(warnings.length > 0, "expected at least one console.warn call");
   });
 
-  it("invalid rule returns fallback (does not throw)", () => {
+  it("regression: invalid rule returns fallback (does not throw)", () => {
     const origWarn = console.warn;
     console.warn = () => {}; // silence for this test
 
@@ -225,6 +225,37 @@ describe("Issue #7/#8: invalid rules emit console.warn", () => {
 
     console.warn = origWarn;
   });
+});
 
-  it("regression");
+// ---------------------------------------------------------------------------
+// Issue #T03 — Prevent Unhandled Crashes on null Rules & Non-String Dates
+// ---------------------------------------------------------------------------
+describe("Issue #T03: Prevent unhandled crashes on null rules and non-string dates", () => {
+  it("compile() safely ignores falsy or null rules without crashing", () => {
+    let result;
+    assert.doesNotThrow(() => {
+      result = compile([null, undefined, false, 0, "", { time: 6, style: "morning" }]);
+    });
+    assert.strictEqual(result.timeRules.length, 1);
+  });
+
+  it("compile() safely ignores rules with non-string date values without crashing", () => {
+    const origWarn = console.warn;
+    console.warn = () => {}; // silence warnings
+
+    let result;
+    assert.doesNotThrow(() => {
+      result = compile([
+        { date: 20271031, style: "number-date" },
+        { date: {}, style: "object-date" },
+        { since: 1201, until: 2028, style: "number-range" },
+      ]);
+    });
+    
+    assert.doesNotThrow(() => {
+      auto([{ date: 20271031, style: "number-date" }], "fallback", new Date());
+    });
+
+    console.warn = origWarn;
+  });
 });

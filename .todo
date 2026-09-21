@@ -66,7 +66,7 @@
 - **Action Plan:**
   - [x] Add guard in `compile()`: `if (!css || typeof css !== 'object') continue;`.
   - [x] Safely cast and validate strings in `parseDate()` before calling `.split('-')`.
-  - [ ] Add regression tests in `tests/bugfix.test.js`.
+  - [x] Add regression tests in `tests/bugfix.test.js`.
 
 ---
 
