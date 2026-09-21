@@ -7,39 +7,44 @@
 
 ## 📊 Task Status Matrix
 
-| ID | Priority | Category | Task | Target Files | Status |
-|:---|:---|:---|:---|:---|:---:|
-| **T01** | `P0` Critical | Release / CI | Fix scoped npm publishing failure (`HTTP 402`) | [`package.json`](file:///c:/Users/Omid/X/Code/autotheme/package.json), [`publish.yml`](file:///c:/Users/Omid/X/Code/autotheme/.github/workflows/publish.yml) | ⏳ Pending |
-| **T02** | `P0` Critical | Types / Build | Restore full TypeScript declarations in `dist/` | [`package.json`](file:///c:/Users/Omid/X/Code/autotheme/package.json), [`src/types/index.d.ts`](file:///c:/Users/Omid/X/Code/autotheme/src/types/index.d.ts) | ⏳ Pending |
-| **T03** | `P0` Critical | Stability | Prevent unhandled crashes on `null` rules & non-string dates | [`src/core/engine.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js), [`src/core/utils.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/utils.js) | ⏳ Pending |
-| **T04** | `P1` High | Engine / Bug | Validate `parseTime` ranges (fix 24/7 rule takeover) | [`src/core/utils.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/utils.js) | ⏳ Pending |
-| **T05** | `P1` High | Engine / Bug | Fix date+time composite rule wrap-around bug | [`src/core/engine.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js) | ⏳ Pending |
-| **T06** | `P1` High | React / RSC | Add `"use client";` directive to `@omid2007hope/autotheme/react` | [`src/react/useAutoTheme.js`](file:///c:/Users/Omid/X/Code/autotheme/src/react/useAutoTheme.js) | ⏳ Pending |
-| **T07** | `P1` High | SSR / React | Resolve SSR hydration mismatch & reconcile README | [`src/react/useAutoTheme.js`](file:///c:/Users/Omid/X/Code/autotheme/src/react/useAutoTheme.js), [`README.md`](file:///c:/Users/Omid/X/Code/autotheme/README.md) | ⏳ Pending |
-| **T08** | `P2` Medium | Performance | Eliminate `JSON.stringify` on every component render | [`src/react/useAutoTheme.js`](file:///c:/Users/Omid/X/Code/autotheme/src/react/useAutoTheme.js) | ⏳ Pending |
-| **T09** | `P2` Medium | Architecture | Deduplicate rule evaluation logic in `css-vars.js` | [`src/adapters/css-vars.js`](file:///c:/Users/Omid/X/Code/autotheme/src/adapters/css-vars.js), [`src/core/engine.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js) | ⏳ Pending |
-| **T10** | `P2` Medium | Examples | Remove duplicate `setInterval` leak in `html-css-vars` demo | [`examples/html-css-vars/index.html`](file:///c:/Users/Omid/X/Code/autotheme/examples/html-css-vars/index.html) | ⏳ Pending |
-| **T11** | `P2` Medium | Edge Case | Fallback properly when matched rule has no `style` | [`src/core/engine.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js) | ⏳ Pending |
-| **T12** | `P3` Low | Metadata | Add standard `package.json` fields (`repository`, `sideEffects`, `engines`) | [`package.json`](file:///c:/Users/Omid/X/Code/autotheme/package.json) | ⏳ Pending |
-| **T13** | `P3` Low | DevOps | Create CI workflow (`ci.yml`) for PRs and pushes | [`.github/workflows/ci.yml`](file:///c:/Users/Omid/X/Code/autotheme/.github/workflows) | ⏳ Pending |
-| **T14** | `P3` Low | Docs | Correct README license badge from `LICENSE-CUSTOM` to `LICENSE-MIT` | [`README.md`](file:///c:/Users/Omid/X/Code/autotheme/README.md) | ⏳ Pending |
-| **T15** | `P3` Low | DOM Cleanup | Implement clean DOM teardown in `observe().stop()` & `autoVars().stop()` | [`src/core/observer.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/observer.js), [`src/adapters/css-vars.js`](file:///c:/Users/Omid/X/Code/autotheme/src/adapters/css-vars.js) | ⏳ Pending |
-| **T16** | `P3` Low | Feature | Add day-of-week rule support (`day: 'friday' \| [1, 5]`) | [`src/core/engine.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js), [`src/types/index.d.ts`](file:///c:/Users/Omid/X/Code/autotheme/src/types/index.d.ts) | ⏳ Pending |
+| ID      | Priority      | Category      | Task                                                                        | Target Files                                                                                                                                                                         |   Status   |
+| :------ | :------------ | :------------ | :-------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------: |
+| **T01** | `P0` Critical | Release / CI  | Fix scoped npm publishing failure (`HTTP 402`)                              | [`package.json`](file:///c:/Users/Omid/X/Code/autotheme/package.json), [`publish.yml`](file:///c:/Users/Omid/X/Code/autotheme/.github/workflows/publish.yml)                         | ⏳ Pending |
+| **T02** | `P0` Critical | Types / Build | Restore full TypeScript declarations in `dist/`                             | [`package.json`](file:///c:/Users/Omid/X/Code/autotheme/package.json), [`src/types/index.d.ts`](file:///c:/Users/Omid/X/Code/autotheme/src/types/index.d.ts)                         | ⏳ Pending |
+| **T03** | `P0` Critical | Stability     | Prevent unhandled crashes on `null` rules & non-string dates                | [`src/core/engine.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js), [`src/core/utils.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/utils.js)                   | ⏳ Pending |
+| **T04** | `P1` High     | Engine / Bug  | Validate `parseTime` ranges (fix 24/7 rule takeover)                        | [`src/core/utils.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/utils.js)                                                                                                      | ⏳ Pending |
+| **T05** | `P1` High     | Engine / Bug  | Fix date+time composite rule wrap-around bug                                | [`src/core/engine.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js)                                                                                                    | ⏳ Pending |
+| **T06** | `P1` High     | React / RSC   | Add `"use client";` directive to `@omid2007hope/autotheme/react`            | [`src/react/useAutoTheme.js`](file:///c:/Users/Omid/X/Code/autotheme/src/react/useAutoTheme.js)                                                                                      | ⏳ Pending |
+| **T07** | `P1` High     | SSR / React   | Resolve SSR hydration mismatch & reconcile README                           | [`src/react/useAutoTheme.js`](file:///c:/Users/Omid/X/Code/autotheme/src/react/useAutoTheme.js), [`README.md`](file:///c:/Users/Omid/X/Code/autotheme/README.md)                     | ⏳ Pending |
+| **T08** | `P2` Medium   | Performance   | Eliminate `JSON.stringify` on every component render                        | [`src/react/useAutoTheme.js`](file:///c:/Users/Omid/X/Code/autotheme/src/react/useAutoTheme.js)                                                                                      | ⏳ Pending |
+| **T09** | `P2` Medium   | Architecture  | Deduplicate rule evaluation logic in `css-vars.js`                          | [`src/adapters/css-vars.js`](file:///c:/Users/Omid/X/Code/autotheme/src/adapters/css-vars.js), [`src/core/engine.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js)     | ⏳ Pending |
+| **T10** | `P2` Medium   | Examples      | Remove duplicate `setInterval` leak in `html-css-vars` demo                 | [`examples/html-css-vars/index.html`](file:///c:/Users/Omid/X/Code/autotheme/examples/html-css-vars/index.html)                                                                      | ⏳ Pending |
+| **T11** | `P2` Medium   | Edge Case     | Fallback properly when matched rule has no `style`                          | [`src/core/engine.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js)                                                                                                    | ⏳ Pending |
+| **T12** | `P3` Low      | Metadata      | Add standard `package.json` fields (`repository`, `sideEffects`, `engines`) | [`package.json`](file:///c:/Users/Omid/X/Code/autotheme/package.json)                                                                                                                | ⏳ Pending |
+| **T13** | `P3` Low      | DevOps        | Create CI workflow (`ci.yml`) for PRs and pushes                            | [`.github/workflows/ci.yml`](file:///c:/Users/Omid/X/Code/autotheme/.github/workflows)                                                                                               | ⏳ Pending |
+| **T14** | `P3` Low      | Docs          | Correct README license badge from `LICENSE-CUSTOM` to `LICENSE-MIT`         | [`README.md`](file:///c:/Users/Omid/X/Code/autotheme/README.md)                                                                                                                      | ⏳ Pending |
+| **T15** | `P3` Low      | DOM Cleanup   | Implement clean DOM teardown in `observe().stop()` & `autoVars().stop()`    | [`src/core/observer.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/observer.js), [`src/adapters/css-vars.js`](file:///c:/Users/Omid/X/Code/autotheme/src/adapters/css-vars.js) | ⏳ Pending |
+| **T16** | `P3` Low      | Feature       | Add day-of-week rule support (`day: 'friday' \| [1, 5]`)                    | [`src/core/engine.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js), [`src/types/index.d.ts`](file:///c:/Users/Omid/X/Code/autotheme/src/types/index.d.ts)             | ⏳ Pending |
 
 ---
 
 ## 🔴 P0 — Critical (Release Blockers & Runtime Crashes)
 
 ### [ ] T01: Fix Scoped Package Publishing Failure (HTTP 402)
+
 - **Files:** [`package.json:2`](file:///c:/Users/Omid/X/Code/autotheme/package.json#L2), [`.github/workflows/publish.yml:34`](file:///c:/Users/Omid/X/Code/autotheme/.github/workflows/publish.yml#L34)
-- **Problem:** Scoped packages (`@omid2007hope/*`) default to private access on npm. Without explicit public configuration, `npm publish` fails with `402 Payment Required`.
+  \
+
+\-][] **Problem:** Scoped packages (`@omid2007hope/*`) default to private access on npm. Without explicit public configuration, `npm publish` fails with `402 Payment Required`.
+
 - **Action Plan:**
-  - [ ] Add `"publishConfig": { "access": "public" }` to `package.json`.
-  - [ ] Add `run: npm publish --access public` to `.github/workflows/publish.yml`.
+  - [x] Add `"publishConfig": { "access": "public" }` to `package.json`.
+  - [x] Add `run: npm publish --access public` to `.github/workflows/publish.yml`.
 
 ---
 
 ### [ ] T02: Restore Full TypeScript Declarations in Distribution Bundle
+
 - **Files:** [`package.json:25`](file:///c:/Users/Omid/X/Code/autotheme/package.json#L25), [`src/types/index.d.ts`](file:///c:/Users/Omid/X/Code/autotheme/src/types/index.d.ts), [`dist/index.d.ts:132`](file:///c:/Users/Omid/X/Code/autotheme/dist/index.d.ts#L132)
 - **Problem:** `tsup` generates types from JavaScript files with incomplete JSDoc, overwriting `dist/index.d.ts` with `auto(..., any): any`. The handcrafted types in `src/types/index.d.ts` are dropped.
 - **Action Plan:**
@@ -53,6 +58,7 @@
 ---
 
 ### [ ] T03: Prevent Unhandled Crashes on `null` Rules & Non-String Dates
+
 - **Files:** [`src/core/engine.js:78-84`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js#L78-L84), [`src/core/utils.js:23-24`](file:///c:/Users/Omid/X/Code/autotheme/src/core/utils.js#L23-L24)
 - **Problem:**
   - `compile()` crashes on `[condition && { time: 6 }]` when `condition` is falsy (`TypeError: Cannot read properties of null (reading 'vars')`).
@@ -67,6 +73,7 @@
 ## 🟠 P1 — High (Logic Flaws, Security / Stability Hazards & Framework Breakages)
 
 ### [ ] T04: Validate `parseTime` Ranges (Fix 24/7 Rule Takeover)
+
 - **Files:** [`src/core/utils.js:106-123`](file:///c:/Users/Omid/X/Code/autotheme/src/core/utils.js#L106-L123), [`src/core/utils.js:133-145`](file:///c:/Users/Omid/X/Code/autotheme/src/core/utils.js#L133-L145)
 - **Problem:** Times like `"25:00"` or `"99:99"` parse to minutes > 1439. In `getMatchingTimeRule`, wrap-around fallback promotes this invalid rule to be active 24 hours a day.
 - **Action Plan:**
@@ -77,6 +84,7 @@
 ---
 
 ### [ ] T05: Fix Date + Time Composite Rule Wrap-Around Bug
+
 - **Files:** [`src/core/engine.js:186-202`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js#L186-L202)
 - **Problem:** A single rule `{ date: '10-31', time: 18, style: 'party' }` applies `party` all day before 18:00 because `evaluateTimeMatches` wraps around when no other rules exist for that date.
 - **Action Plan:**
@@ -86,6 +94,7 @@
 ---
 
 ### [ ] T06: Add `"use client";` Directive to `@omid2007hope/autotheme/react`
+
 - **Files:** [`src/react/useAutoTheme.js:1`](file:///c:/Users/Omid/X/Code/autotheme/src/react/useAutoTheme.js#L1), [`package.json:25`](file:///c:/Users/Omid/X/Code/autotheme/package.json#L25)
 - **Problem:** Next.js App Router and React Server Components (RSC) error on import without a `"use client";` boundary banner.
 - **Action Plan:**
@@ -95,6 +104,7 @@
 ---
 
 ### [ ] T07: Resolve SSR Hydration Mismatch & Reconcile README
+
 - **Files:** [`README.md:258-264`](file:///c:/Users/Omid/X/Code/autotheme/README.md#L258-L264), [`tests/ssr-rendering.test.js:13-22`](file:///c:/Users/Omid/X/Code/autotheme/tests/ssr-rendering.test.js#L13-L22), [`src/react/useAutoTheme.js:59`](file:///c:/Users/Omid/X/Code/autotheme/src/react/useAutoTheme.js#L59)
 - **Problem:** README claims server returns fallback; code evaluates server time. In `useAutoTheme()`, `useState(() => evaluate())` runs on server, causing client hydration mismatch when server and client clocks/timezones differ.
 - **Action Plan:**
@@ -106,6 +116,7 @@
 ## 🟡 P2 — Medium (Architecture Duplication, Performance & Leaks)
 
 ### [ ] T08: Eliminate `JSON.stringify` on Every Component Render
+
 - **Files:** [`src/react/useAutoTheme.js:41-50`](file:///c:/Users/Omid/X/Code/autotheme/src/react/useAutoTheme.js#L41-L50)
 - **Problem:** `JSON.stringify(rules)` runs up to twice per render cycle, creating CPU lag on large rule sets (e.g. 1440-rule minute resolution).
 - **Action Plan:**
@@ -114,6 +125,7 @@
 ---
 
 ### [ ] T09: Deduplicate Rule Evaluation Logic in `css-vars.js`
+
 - **Files:** [`src/adapters/css-vars.js:50-90`](file:///c:/Users/Omid/X/Code/autotheme/src/adapters/css-vars.js#L50-L90), [`src/core/engine.js:186-230`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js#L186-L230)
 - **Problem:** ~40 lines of rule matching and priority resolution are copy-pasted between `engine.js` and `css-vars.js`.
 - **Action Plan:**
@@ -122,6 +134,7 @@
 ---
 
 ### [ ] T10: Remove Duplicate `setInterval` Leak in `html-css-vars` Demo
+
 - **Files:** [`examples/html-css-vars/index.html:62-68`](file:///c:/Users/Omid/X/Code/autotheme/examples/html-css-vars/index.html#L62-L68)
 - **Problem:** Calling `setInterval(() => autoVars(rules), 60000)` on top of `autoVars()` creates cascading leaked timers.
 - **Action Plan:**
@@ -130,6 +143,7 @@
 ---
 
 ### [ ] T11: Fallback Properly When Matched Rule Has No `style`
+
 - **Files:** [`src/core/engine.js:209, 216, 223, 228`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js#L209)
 - **Problem:** If a matched rule lacks a `style` property (e.g. var-only rule passed to `auto()`), `auto()` returns `undefined` instead of `fallback`.
 - **Action Plan:**
@@ -140,6 +154,7 @@
 ## 🟢 P3 — Low / Polish (Standards, Documentation, CI & Enhancements)
 
 ### [ ] T12: Add Standard `package.json` Metadata
+
 - **Files:** [`package.json`](file:///c:/Users/Omid/X/Code/autotheme/package.json)
 - **Action Plan:**
   - [ ] Add `"repository"` (Git URL).
@@ -150,6 +165,7 @@
 ---
 
 ### [ ] T13: Create CI Workflow (`ci.yml`) for PRs and Pushes
+
 - **Files:** [`.github/workflows/ci.yml`](file:///c:/Users/Omid/X/Code/autotheme/.github/workflows)
 - **Action Plan:**
   - [ ] Create GitHub Actions workflow triggering on `push` to `main` and `pull_request` to run `npm ci`, `npm test`, and `npm run build`.
@@ -157,6 +173,7 @@
 ---
 
 ### [ ] T14: Correct README License Badge
+
 - **Files:** [`README.md:5`](file:///c:/Users/Omid/X/Code/autotheme/README.md#L5)
 - **Action Plan:**
   - [ ] Change badge from `LICENSE-CUSTOM` to `LICENSE-MIT`.
@@ -164,6 +181,7 @@
 ---
 
 ### [ ] T15: Implement Clean DOM Teardown in `observe().stop()` & `autoVars().stop()`
+
 - **Files:** [`src/core/observer.js:114-122`](file:///c:/Users/Omid/X/Code/autotheme/src/core/observer.js#L114-L122), [`src/adapters/css-vars.js:125-133`](file:///c:/Users/Omid/X/Code/autotheme/src/adapters/css-vars.js#L125-L133)
 - **Action Plan:**
   - [ ] Add option/method to restore original classes and remove injected CSS custom properties on `stop()`.
@@ -171,6 +189,7 @@
 ---
 
 ### [ ] T16: Add Day-of-Week Rule Support
+
 - **Files:** [`src/core/engine.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js), [`src/types/index.d.ts`](file:///c:/Users/Omid/X/Code/autotheme/src/types/index.d.ts)
 - **Action Plan:**
   - [ ] Implement V1.1 Roadmap item: `day: 'friday'` or `day: [1, 5]` (Mon–Fri).
