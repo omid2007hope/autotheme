@@ -1,3 +1,5 @@
+[![Socket Badge](https://badge.socket.dev/npm/package/@omid2007hope/autotheme/1.6.4)](https://badge.socket.dev/npm/package/@omid2007hope/autotheme/1.6.4)
+
 <p align="center">
   <img src="https://img.shields.io/badge/ZERO-DEPENDENCIES-000000?style=for-the-badge&labelColor=000000&color=00ffcc" alt="Zero Dependencies" />
   <img src="https://img.shields.io/badge/<1KB-GZIPPED-000000?style=for-the-badge&labelColor=000000&color=00ffcc" alt="<1KB Gzipped" />
