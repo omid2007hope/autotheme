@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * AutoTheme React Hook.
  * Provides a reactive wrapper around `auto()` that re-evaluates on time
@@ -6,8 +8,8 @@
  * @module react/useAutoTheme
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { auto, compile } from '../core/engine.js';
+import { useState, useEffect, useCallback, useRef } from "react";
+import { auto, compile } from "../core/engine.js";
 
 /**
  * React hook that returns the currently active style and re-evaluates
@@ -31,14 +33,17 @@ import { auto, compile } from '../core/engine.js';
  *   return <div className={currentStyle}>Hello</div>;
  * }
  */
-export function useAutoTheme(rules, fallback = '', options = {}) {
+export function useAutoTheme(rules, fallback = "", options = {}) {
   const { interval = 60000 } = options;
 
   // Deep compare memoize to prevent infinite loops when inline arrays are passed
   const rulesRef = useRef(rules);
   const compiledRef = useRef(null);
 
-  if (JSON.stringify(rules) !== JSON.stringify(rulesRef.current) || !compiledRef.current) {
+  if (
+    JSON.stringify(rules) !== JSON.stringify(rulesRef.current) ||
+    !compiledRef.current
+  ) {
     rulesRef.current = rules;
     compiledRef.current = compile(rules);
   }
@@ -52,7 +57,7 @@ export function useAutoTheme(rules, fallback = '', options = {}) {
 
   const evaluate = useCallback(
     () => auto(memoizedCompiledRules, memoizedFallback),
-    [memoizedCompiledRules, memoizedFallback]
+    [memoizedCompiledRules, memoizedFallback],
   );
 
   // Use a callback initializer so if `evaluate()` returns a function, React doesn't execute it
@@ -63,7 +68,7 @@ export function useAutoTheme(rules, fallback = '', options = {}) {
     setStyle(() => evaluate());
 
     const tick = () => setStyle(() => evaluate());
-    
+
     // Sync to the next boundary to prevent timer drift
     let intervalId;
     const msUntilNext = interval - (Date.now() % interval);
@@ -73,20 +78,23 @@ export function useAutoTheme(rules, fallback = '', options = {}) {
     }, msUntilNext);
 
     const onVisibility = () => {
-      if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+      if (
+        typeof document !== "undefined" &&
+        document.visibilityState === "visible"
+      ) {
         tick();
       }
     };
 
-    if (typeof document !== 'undefined') {
-      document.addEventListener('visibilitychange', onVisibility);
+    if (typeof document !== "undefined") {
+      document.addEventListener("visibilitychange", onVisibility);
     }
 
     return () => {
       clearTimeout(timeoutId);
       if (intervalId) clearInterval(intervalId);
-      if (typeof document !== 'undefined') {
-        document.removeEventListener('visibilitychange', onVisibility);
+      if (typeof document !== "undefined") {
+        document.removeEventListener("visibilitychange", onVisibility);
       }
     };
   }, [evaluate, interval]);

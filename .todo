@@ -93,13 +93,13 @@
 
 ---
 
-### [ ] T06: Add `"use client";` Directive to `@omid2007hope/autotheme/react`
+### [x] T06: Add `"use client";` Directive to `@omid2007hope/autotheme/react`
 
 - **Files:** [`src/react/useAutoTheme.js:1`](file:///c:/Users/Omid/X/Code/autotheme/src/react/useAutoTheme.js#L1), [`package.json:25`](file:///c:/Users/Omid/X/Code/autotheme/package.json#L25)
 - **Problem:** Next.js App Router and React Server Components (RSC) error on import without a `"use client";` boundary banner.
 - **Action Plan:**
-  - [ ] Add `"use client";` at top of `src/react/useAutoTheme.js`.
-  - [ ] Configure `tsup` build banner (`--banner.js '"use client";'`) for the React entry point.
+  - [x] Add `"use client";` at top of `src/react/useAutoTheme.js`.
+  - [x] Configure `tsup` build banner (`--banner.js '"use client";'`) for the React entry point.
 
 ---
 
