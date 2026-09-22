@@ -88,8 +88,8 @@
 - **Files:** [`src/core/engine.js:186-202`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js#L186-L202)
 - **Problem:** A single rule `{ date: '10-31', time: 18, style: 'party' }` applies `party` all day before 18:00 because `evaluateTimeMatches` wraps around when no other rules exist for that date.
 - **Action Plan:**
-  - [ ] Modify `evaluateTimeMatches`: if time is before the earliest specified rule on that date/range and no midnight rule exists, return `null` so lower-priority time rules or fallback can apply.
-  - [ ] Update tests to verify expected date+time scoping.
+  - [x] Modify `evaluateTimeMatches`: if time is before the earliest specified rule on that date/range and no midnight rule exists, return `null` so lower-priority time rules or fallback can apply.
+  - [x] Update tests to verify expected date+time scoping.
 
 ---
 

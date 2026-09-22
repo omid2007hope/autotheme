@@ -209,7 +209,8 @@ export function auto(cssEntryArray, fallback = "", _now) {
   // Returns the matched rule object, or null if nothing matched.
   // This lets callers distinguish "no match" (null) from "matched with falsy style".
   const evaluateTimeMatches = (matchedRules) => {
-    if (matchedRules.length === 0) return null;
+    // Check if exist or is an array
+    if (!Array.isArray(matchedRules) || matchedRules.length === 0) return null;
 
     // If any css has a time condition, we must evaluate them together
     const hasTimeRule = matchedRules.some((r) => r.time != null);
@@ -220,6 +221,14 @@ export function auto(cssEntryArray, fallback = "", _now) {
       );
       // Sort locally since utils getMatchingTimeRule no longer sorts
       normalizedTimeRules.sort((a, b) => b._minutes - a._minutes);
+      
+      // T05: If time is before the earliest specified rule for this date and no midnight rule exists,
+      // return null so lower-priority time rules or fallback can apply instead of wrapping around.
+      const earliestRule = normalizedTimeRules[normalizedTimeRules.length - 1];
+      if (earliestRule._minutes > 0 && totalMinutes < earliestRule._minutes) {
+        return null;
+      }
+
       return getMatchingTimeRule(normalizedTimeRules, totalMinutes); // rule | null
     }
 

@@ -114,9 +114,7 @@ describe("Issue #5: { since, until, time } composite rules", () => {
     assert.strictEqual(auto(rules, "fallback", outOfRange), "light");
   });
 
-  it("composite rule with a single time, inside range before the hour — wraps to that rule (only one time boundary)", () => {
-    // With only one range+time rule, the wrap-around logic makes it active all day within range.
-    // This is consistent with how time:18 alone acts as the sole time rule.
+  it("composite rule with a single time, inside range before the hour — falls through (T05 wrap-around fix)", () => {
     const rules = [
       {
         since: "12-01",
@@ -125,11 +123,11 @@ describe("Issue #5: { since, until, time } composite rules", () => {
         style: "dark-winter-evening",
       },
     ];
-    // Dec 15 at 14:00 — inside range. Only one time boundary → wraps to it.
+    // Dec 15 at 14:00 inside range, but before 18:00. Should NOT wrap around.
     const inRangeBefore = new Date(2027, 11, 15, 14, 0, 0);
     assert.strictEqual(
       auto(rules, "fallback", inRangeBefore),
-      "dark-winter-evening",
+      "fallback",
     );
   });
 
@@ -261,7 +259,7 @@ describe("Issue #T03: Prevent unhandled crashes on null rules and non-string dat
 });
 
 // ---------------------------------------------------------------------------
-// Issue #T04 � Validate parseTime Ranges
+// Issue #T04 � Validate parseTime Ranges
 // ---------------------------------------------------------------------------
 describe("Issue #T04: Validate parseTime Ranges (Fix 24/7 Rule Takeover)", () => {
   it("verifies invalid string times do not hijack the theme", () => {
@@ -282,6 +280,28 @@ describe("Issue #T04: Validate parseTime Ranges (Fix 24/7 Rule Takeover)", () =>
     assert.strictEqual(result, "valid-10");
 
     console.warn = origWarn;
+  });
+});
+
+
+// ---------------------------------------------------------------------------
+// Issue #T05 � Date + Time Composite Rule Wrap-Around Bug
+// ---------------------------------------------------------------------------
+describe("Issue #T05: Date + Time Composite Rule Wrap-Around Bug", () => {
+  it("does not wrap around for composite date/time rules if before the earliest time", () => {
+    const rules = [
+      { date: "10-31", time: 18, style: "halloween-party" },
+      { time: 10, style: "morning" }
+    ];
+
+    // On Oct 31 at 15:00 (before 18:00), we should fall through to morning rule (or fallback),
+    // rather than wrapping around to 'halloween-party'.
+    const result = auto(rules, "fallback", new Date(2027, 9, 31, 15, 0)); // Oct 31, 15:00
+    assert.strictEqual(result, "morning");
+
+    // On Oct 31 at 19:00 (after 18:00), it should apply the party rule
+    const partyResult = auto(rules, "fallback", new Date(2027, 9, 31, 19, 0));
+    assert.strictEqual(partyResult, "halloween-party");
   });
 });
 
