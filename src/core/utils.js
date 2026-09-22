@@ -32,14 +32,14 @@ export function parseDate(str) {
       day: parseInt(parts[2], 10),
     };
   }
-  
+
   if (parts.length === 2) {
     return {
       month: parseInt(parts[0], 10),
       day: parseInt(parts[1], 10),
     };
   }
-  
+
   return undefined;
 }
 
@@ -53,7 +53,7 @@ export function parseDate(str) {
 export function isExactDateMatch(rule, now) {
   const parsed = parseDate(rule.date);
   if (!parsed) return false;
-  
+
   const month = now.getMonth() + 1;
   const day = now.getDate();
 
@@ -80,7 +80,7 @@ export function isInDateRange(rule, now) {
   const since = parseDate(rule.since);
   const until = parseDate(rule.until);
   if (!since || !until) return false;
-  
+
   const year = now.getFullYear();
   const month = now.getMonth() + 1;
   const day = now.getDate();
@@ -123,10 +123,14 @@ export function parseTime(timeVal) {
       const parts = timeVal.split(":");
       const h = parseInt(parts[0], 10);
       const m = parseInt(parts[1], 10);
-      if (!isNaN(h) && !isNaN(m)) return h * 60 + m;
+      if (!isNaN(h) && !isNaN(m) && h >= 0 && h <= 23 && m >= 0 && m <= 59) {
+        return h * 60 + m;
+      }
     } else {
       const h = parseInt(timeVal, 10);
-      if (!isNaN(h) && h >= 0 && h <= 23) return h * 60;
+      if (!isNaN(h) && h >= 0 && h <= 23) {
+        return h * 60;
+      }
     }
   }
   return null;

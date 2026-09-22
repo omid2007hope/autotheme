@@ -259,3 +259,29 @@ describe("Issue #T03: Prevent unhandled crashes on null rules and non-string dat
     console.warn = origWarn;
   });
 });
+
+// ---------------------------------------------------------------------------
+// Issue #T04 — Validate parseTime Ranges
+// ---------------------------------------------------------------------------
+describe("Issue #T04: Validate parseTime Ranges (Fix 24/7 Rule Takeover)", () => {
+  it("verifies invalid string times do not hijack the theme", () => {
+    const origWarn = console.warn;
+    console.warn = () => {}; // silence warnings
+
+    // 25:00 and 99:99 should be ignored, falling back to default or matching valid rules
+    const result = auto(
+      [
+        { time: "25:00", style: "hijacked-25" },
+        { time: "99:99", style: "hijacked-99" },
+        { time: "10:00", style: "valid-10" }
+      ],
+      "fallback",
+      new Date(2027, 0, 1, 15, 0)
+    );
+
+    assert.strictEqual(result, "valid-10");
+
+    console.warn = origWarn;
+  });
+});
+

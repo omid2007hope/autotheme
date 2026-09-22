@@ -77,9 +77,9 @@
 - **Files:** [`src/core/utils.js:106-123`](file:///c:/Users/Omid/X/Code/autotheme/src/core/utils.js#L106-L123), [`src/core/utils.js:133-145`](file:///c:/Users/Omid/X/Code/autotheme/src/core/utils.js#L133-L145)
 - **Problem:** Times like `"25:00"` or `"99:99"` parse to minutes > 1439. In `getMatchingTimeRule`, wrap-around fallback promotes this invalid rule to be active 24 hours a day.
 - **Action Plan:**
-  - [ ] In `parseTime()`, strictly validate that `h >= 0 && h <= 23 && m >= 0 && m <= 59`.
-  - [ ] Return `null` and log warning if time is out of valid bounds.
-  - [ ] Add unit test verifying invalid string times do not hijack the theme.
+  - [x] In `parseTime()`, strictly validate that `h >= 0 && h <= 23 && m >= 0 && m <= 59`.
+  - [x] Return `null` and log warning if time is out of valid bounds.
+  - [x] Add unit test verifying invalid string times do not hijack the theme.
 
 ---
 
