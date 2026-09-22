@@ -60,8 +60,9 @@ export function useAutoTheme(rules, fallback = "", options = {}) {
     [memoizedCompiledRules, memoizedFallback],
   );
 
-  // Use a callback initializer so if `evaluate()` returns a function, React doesn't execute it
-  const [style, setStyle] = useState(() => evaluate());
+  // Initialize with fallback to prevent React hydration mismatches during SSR.
+  // The actual theme will be evaluated and synced immediately upon client mount.
+  const [style, setStyle] = useState(memoizedFallback);
 
   useEffect(() => {
     // Wrap evaluate() in a callback so if the payload is a function, React stores it directly

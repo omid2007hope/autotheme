@@ -255,12 +255,22 @@ This adds/removes classes on the target element automatically.
 
 ## SSR Safety
 
-AutoTheme is fully safe for **Next.js**, **Nuxt**, **Remix**, **Astro**, and any SSR/SSG framework. When `typeof window === 'undefined'`, the engine returns the **fallback** value instead of crashing.
+AutoTheme is fully safe for **Next.js**, **Nuxt**, **Remix**, **Astro**, and any SSR/SSG framework. 
+
+When running on a server or at build time (Node.js), the core `auto()` function evaluates rules against the **server's current time** (or the explicit `now` Date you provide). 
+
+**React Hydration Note:** If you use `auto()` directly in a React component rendering on the server, it may cause hydration mismatches if the server and client are in different time zones. To guarantee perfect React hydration in Next.js/Remix, **always use the `useAutoTheme()` hook**, which safely renders the `fallback` during the initial SSR pass and seamlessly snaps to the user's localized time upon client mount!
 
 ```jsx
-// Works perfectly in Next.js App Router
-// Server render gets the fallback; client hydration picks the real theme
-<div className={auto(rules, "bg-white")}>
+"use client";
+import { useAutoTheme } from "@omid2007hope/autotheme/react";
+
+export default function App() {
+  // SSR: Renders "bg-white" to match the server output perfectly.
+  // Client: Hydrates, evaluates local time, and seamlessly updates if needed.
+  const theme = useAutoTheme(rules, "bg-white");
+  return <div className={theme}>...</div>
+}
 ```
 
 ---
@@ -269,8 +279,8 @@ AutoTheme is fully safe for **Next.js**, **Nuxt**, **Remix**, **Astro**, and any
 
 | Framework | Support | Notes |
 |---|---|---|
-| **React** | ✅ | `auto()` inline + `useAutoTheme()` hook for live re-renders |
-| **Next.js** | ✅ | SSR-safe — returns fallback on the server, real theme on the client |
+| **React** | ✅ | Use the `useAutoTheme()` hook for live re-renders and flawless SSR hydration. |
+| **Next.js** | ✅ | App Router & Pages Router fully supported via the `'use client'` directive. |
 | **Vue** | ✅ | Works — pass the returned string to your `:class` binding |
 | **Svelte** | ✅ | Works — pass the returned string to your `class:` directive |
 | **Astro** | ✅ | Works client-side in `client:load` components |

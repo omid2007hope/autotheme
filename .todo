@@ -108,8 +108,8 @@
 - **Files:** [`README.md:258-264`](file:///c:/Users/Omid/X/Code/autotheme/README.md#L258-L264), [`tests/ssr-rendering.test.js:13-22`](file:///c:/Users/Omid/X/Code/autotheme/tests/ssr-rendering.test.js#L13-L22), [`src/react/useAutoTheme.js:59`](file:///c:/Users/Omid/X/Code/autotheme/src/react/useAutoTheme.js#L59)
 - **Problem:** README claims server returns fallback; code evaluates server time. In `useAutoTheme()`, `useState(() => evaluate())` runs on server, causing client hydration mismatch when server and client clocks/timezones differ.
 - **Action Plan:**
-  - [ ] Align `useAutoTheme()` hydration: render fallback on initial SSR mount, then seamlessly sync active theme client-side.
-  - [ ] Reconcile `README.md` and `ssr-rendering.test.js` to define exact, unified SSR behavior.
+  - [x] Align `useAutoTheme()` hydration: render fallback on initial SSR mount, then seamlessly sync active theme client-side.
+  - [x] Reconcile `README.md` and `ssr-rendering.test.js` to define exact, unified SSR behavior.
 
 ---
 
