@@ -37,6 +37,10 @@ import { auto, compile } from "../core/engine.js";
 // rules e.g {{time: 6.00, style: ""}, {time: 6.00, style: ""}, etc}
 // was defined by developer
 export function useAutoTheme(rules, fallback = "", options = {}) {
+  // 1. The Safety Guard (Format Check):
+  // If it's an object with our buckets instead of a raw array, it's precompiled.
+  const isPrecompiled = rules && !Array.isArray(rules) && rules.timeRules;
+
   const { interval = 60000 } = options;
 
   // Deep compare memoize to prevent infinite loops when inline arrays are passed
@@ -48,15 +52,16 @@ export function useAutoTheme(rules, fallback = "", options = {}) {
   // after each render new memory address e.g. B
   // Check if initial memory address dose not match current address
   // e.g. A !== B
-  if (
-    JSON.stringify(rules) !== JSON.stringify(rulesRef.current) ||
-    !compiledRef.current
-  ) {
+  const hasChanged = isPrecompiled
+    ? rules !== rulesRef.current
+    : JSON.stringify(rules) !== JSON.stringify(rulesRef.current);
+
+  if (hasChanged || !compiledRef.current) {
     // initial memory address is you new/current memory address
     // replace A with B replace B with C and so on
     rulesRef.current = rules;
     // and then compile the correct address and hold it in a new ref
-    compiledRef.current = compile(rules);
+    compiledRef.current = isPrecompiled ? rules : compile(rules);
   }
   const memoizedCompiledRules = compiledRef.current;
 

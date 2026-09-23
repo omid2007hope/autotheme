@@ -120,7 +120,6 @@ export interface UseAutoThemeOptions {
  * Compiled rules structure optimized for the engine.
  */
 export interface CompiledRules<T = string | Record<string, string>> {
-  __compiled: boolean;
   exactOneOff: AutoRule<T>[];
   exactRecurring: AutoRule<T>[];
   dateRanges: AutoRule<T>[];

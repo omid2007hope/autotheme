@@ -57,9 +57,9 @@ import {
  */
 export function compile(cssStyle) {
   if (!Array.isArray(cssStyle)) {
-    if (cssStyle && cssStyle.__compiled) return cssStyle;
+    // If it's already an object with our bucket arrays, it's pre-compiled!
+    if (cssStyle && cssStyle.timeRules && cssStyle.exactOneOff) return cssStyle;
     return {
-      __compiled: true,
       exactOneOff: [],
       exactRecurring: [],
       dateRanges: [],
@@ -184,7 +184,6 @@ export function compile(cssStyle) {
   timeRules.sort((a, b) => b._minutes - a._minutes);
 
   return {
-    __compiled: true,
     exactOneOff,
     exactRecurring,
     dateRanges,
