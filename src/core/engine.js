@@ -25,8 +25,8 @@ import {
  *   4. Time-of-day match
  *   5. Fallback
  *
- * @param {Array<import('../types/index.js').AutoRule>} cssEntryArray - Array of css objects
- * @param {string | object} [fallback=''] - Default style when no css matches
+ * @param {Array<import('../types/index.js').AutoRule>} cssEntryArray - Array of eachRule objects
+ * @param {string | object} [fallback=''] - Default style when no eachRule matches
  * @param {Date} [_now] - Internal: override current date for testing
  * @returns {string | object} The matching style value
  *
@@ -56,10 +56,10 @@ import {
  * @param {Array<import('../types/index.js').AutoRule>} rules
  * @returns {object} Compiled rules structure
  */
-export function compile(cssStyle) {
-  if (!Array.isArray(cssStyle)) {
+export function compile(rules) {
+  if (!Array.isArray(rules)) {
     // If it's already an object with our bucket arrays, it's pre-compiled!
-    if (cssStyle && cssStyle.timeRules && cssStyle.exactOneOff) return cssStyle;
+    if (rules && rules.timeRules && rules.exactOneOff) return rules;
     return {
       exactOneOff: [],
       exactRecurring: [],
@@ -75,39 +75,42 @@ export function compile(cssStyle) {
   const timeRules = [];
   const allVarKeys = new Set();
 
-  for (const css of cssStyle) {
+  for (const eachRule of rules) {
     // safety guard
-    if (!css || typeof css !== "object") {
+    if (!eachRule || typeof eachRule !== "object") {
       continue;
     }
 
-    // Extract var keys for css-vars.js optimization
-    if (css.vars) {
-      for (const key of Object.keys(css.vars)) {
+    // Extract var keys for eachRule-vars.js optimization
+    if (eachRule.vars) {
+      for (const key of Object.keys(eachRule.vars)) {
         allVarKeys.add(key);
       }
     }
 
-    const parsedMinutes = css.time != null ? parseTime(css.time) : null;
+    const parsedMinutes =
+      eachRule.time != null ? parseTime(eachRule.time) : null;
     const compiledRule =
-      parsedMinutes !== null ? { ...css, _minutes: parsedMinutes } : css;
+      parsedMinutes !== null
+        ? { ...eachRule, _minutes: parsedMinutes }
+        : eachRule;
 
     // If date and time together
-    if (css.date != null && css.time != null) {
-      const dateStr = String(css.date);
+    if (eachRule.date != null && eachRule.time != null) {
+      const dateStr = String(eachRule.date);
       const isValidDate = dateStr.length >= 4 && dateStr.length <= 10;
 
       if (!isValidDate) {
         console.warn(
           "[autotheme] compile(): rule ignored — invalid date string (length must be 4–10 chars)",
-          css,
+          eachRule,
         );
         continue;
       }
       if (parsedMinutes === null) {
         console.warn(
           '[autotheme] compile(): rule ignored — invalid time value (must be 0–23 or "HH:MM")',
-          css,
+          eachRule,
         );
         continue;
       }
@@ -120,14 +123,14 @@ export function compile(cssStyle) {
       }
     }
     // If only date
-    else if (css.date != null) {
-      const dateStr = String(css.date);
+    else if (eachRule.date != null) {
+      const dateStr = String(eachRule.date);
       const isValidDate = dateStr.length >= 4 && dateStr.length <= 10;
 
       if (!isValidDate) {
         console.warn(
           "[autotheme] compile(): rule ignored — invalid date string (length must be 4–10 chars)",
-          css,
+          eachRule,
         );
         continue;
       }
@@ -140,43 +143,47 @@ export function compile(cssStyle) {
       }
     }
     // If date range + time together (composite rule) — must check BEFORE lone time branch
-    else if (css.since != null && css.until != null && css.time != null) {
+    else if (
+      eachRule.since != null &&
+      eachRule.until != null &&
+      eachRule.time != null
+    ) {
       if (parsedMinutes === null) {
         console.warn(
           '[autotheme] compile(): rule ignored — invalid time value (must be 0–23 or "HH:MM")',
-          css,
+          eachRule,
         );
         continue;
       }
       dateRanges.push(compiledRule);
     }
     // If only time
-    else if (css.time != null) {
+    else if (eachRule.time != null) {
       if (parsedMinutes === null) {
         console.warn(
           '[autotheme] compile(): rule ignored — invalid time value (must be 0–23 or "HH:MM")',
-          css,
+          eachRule,
         );
         continue;
       }
       timeRules.push(compiledRule);
     }
     // If only range (since + until, no time)
-    else if (css.since != null && css.until != null) {
+    else if (eachRule.since != null && eachRule.until != null) {
       dateRanges.push(compiledRule);
     }
     // since without until, or until without since — invalid
-    else if (css.since != null || css.until != null) {
+    else if (eachRule.since != null || eachRule.until != null) {
       console.warn(
         '[autotheme] compile(): rule ignored — "since" and "until" must both be present',
-        css,
+        eachRule,
       );
     }
     // No recognisable keys — warn and skip
     else {
       console.warn(
         "[autotheme] compile(): rule ignored — no valid keys (date, time, since/until) found",
-        css,
+        eachRule,
       );
     }
   }
@@ -193,19 +200,22 @@ export function compile(cssStyle) {
   };
 }
 
-export function auto(cssEntryArray, fallback = "", _now) {
+export function auto(rules, fallback = "", _now) {
   if (
-    !cssEntryArray ||
-    (Array.isArray(cssEntryArray) && cssEntryArray.length === 0)
+    !rules ||
+    !Array.isArray(rules) ||
+    (Array.isArray(rules) && rules.length === 0)
   ) {
     return fallback;
   }
 
-  const compiled = compile(cssEntryArray);
+  const compiled = compile(rules);
   const now = _now || new Date();
 
   const matchedRule = resolveRule(compiled, now);
-  if (matchedRule != null) return matchedRule.style;
+
+  if (matchedRule != null && matchedRule && matchedRule.style !== undefined)
+    return matchedRule.style;
 
   // Priority 5: Fallback
   return fallback;
