@@ -43,6 +43,48 @@ export function parseDate(str) {
   return undefined;
 }
 
+const DAY_MAP = {
+  sunday: 0,
+  monday: 1,
+  tuesday: 2,
+  wednesday: 3,
+  thursday: 4,
+  friday: 5,
+  saturday: 6,
+  sun: 0,
+  mon: 1,
+  tue: 2,
+  wed: 3,
+  thu: 4,
+  fri: 5,
+  sat: 6
+};
+
+/**
+ * Check if a given Date matches a day-of-week rule.
+ *
+ * @param {{ day: number|string|(number|string)[] }} rule - Rule with a `day` field
+ * @param {Date} now - The current date to evaluate against
+ * @returns {boolean}
+ */
+export function isDayMatch(rule, now) {
+  if (rule.day == null) return false;
+  
+  const currentDay = now.getDay();
+  const days = Array.isArray(rule.day) ? rule.day : [rule.day];
+  
+  for (let d of days) {
+    if (typeof d === 'string') {
+      const parsed = DAY_MAP[d.toLowerCase()];
+      if (parsed === currentDay) return true;
+    } else if (typeof d === 'number') {
+      if (d === currentDay) return true;
+    }
+  }
+  
+  return false;
+}
+
 /**
  * Check if a given Date matches an exact date rule.
  *
@@ -210,7 +252,14 @@ export function resolveRule(compiled, now) {
   const rangeRule = evaluateTimeMatches(matchedRanges);
   if (rangeRule != null) return rangeRule;
 
-  // Priority 4: Time-of-day
+  // Priority 4: Day of week
+  const matchedDays = compiled.dayRules.filter((r) =>
+    isDayMatch(r, now),
+  );
+  const dayRule = evaluateTimeMatches(matchedDays);
+  if (dayRule != null) return dayRule;
+
+  // Priority 5: Time-of-day
   return getMatchingTimeRule(compiled.timeRules, totalMinutes);
 }
 

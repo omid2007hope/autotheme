@@ -1,7 +1,7 @@
 # AutoTheme — Production Release & SaaS Roadmap TODO
 
 > **Target:** High-Quality, Zero-Dependency, Production-Grade npm & SaaS Package  
-> **Progress:** `0 / 16` Tasks Completed (`0%`)
+> **Progress:** `16 / 16` Tasks Completed (`100%`)
 
 ---
 
@@ -115,12 +115,12 @@
 
 ## 🟡 P2 — Medium (Architecture Duplication, Performance & Leaks)
 
-### [ ] T08: Eliminate `JSON.stringify` on Every Component Render
+### [x] T08: Eliminate `JSON.stringify` on Every Component Render
 
 - **Files:** [`src/react/useAutoTheme.js:41-50`](file:///c:/Users/Omid/X/Code/autotheme/src/react/useAutoTheme.js#L41-L50)
 - **Problem:** `JSON.stringify(rules)` runs up to twice per render cycle, creating CPU lag on large rule sets (e.g. 1440-rule minute resolution).
 - **Action Plan:**
-  - [ ] Replace naive `JSON.stringify` with shallow array comparison or accept pre-compiled rules directly.
+  - [x] Replace naive `JSON.stringify` with shallow array comparison or accept pre-compiled rules directly.
 
 ---
 
@@ -153,43 +153,43 @@
 
 ## 🟢 P3 — Low / Polish (Standards, Documentation, CI & Enhancements)
 
-### [ ] T12: Add Standard `package.json` Metadata
+### [x] T12: Add Standard `package.json` Metadata
 
 - **Files:** [`package.json`](file:///c:/Users/Omid/X/Code/autotheme/package.json)
 - **Action Plan:**
-  - [ ] Add `"repository"` (Git URL).
-  - [ ] Add `"bugs"` and `"homepage"`.
-  - [ ] Add `"sideEffects": false` (enables bundler tree-shaking).
-  - [ ] Add `"engines": { "node": ">=18.0.0" }`.
+  - [x] Add `"repository"` (Git URL).
+  - [x] Add `"bugs"` and `"homepage"`.
+  - [x] Add `"sideEffects": false` (enables bundler tree-shaking).
+  - [x] Add `"engines": { "node": ">=18.0.0" }`.
 
 ---
 
-### [ ] T13: Create CI Workflow (`ci.yml`) for PRs and Pushes
+### [x] T13: Create CI Workflow (`ci.yml`) for PRs and Pushes
 
 - **Files:** [`.github/workflows/ci.yml`](file:///c:/Users/Omid/X/Code/autotheme/.github/workflows)
 - **Action Plan:**
-  - [ ] Create GitHub Actions workflow triggering on `push` to `main` and `pull_request` to run `npm ci`, `npm test`, and `npm run build`.
+  - [x] Create GitHub Actions workflow triggering on `push` to `main` and `pull_request` to run `npm ci`, `npm test`, and `npm run build`.
 
 ---
 
-### [ ] T14: Correct README License Badge
+### [x] T14: Correct README License Badge
 
 - **Files:** [`README.md:5`](file:///c:/Users/Omid/X/Code/autotheme/README.md#L5)
 - **Action Plan:**
-  - [ ] Change badge from `LICENSE-CUSTOM` to `LICENSE-MIT`.
+  - [x] Change badge from `LICENSE-CUSTOM` to `LICENSE-MIT`.
 
 ---
 
-### [ ] T15: Implement Clean DOM Teardown in `observe().stop()` & `autoVars().stop()`
+### [x] T15: Implement Clean DOM Teardown in `observe().stop()` & `autoVars().stop()`
 
 - **Files:** [`src/core/observer.js:114-122`](file:///c:/Users/Omid/X/Code/autotheme/src/core/observer.js#L114-L122), [`src/adapters/css-vars.js:125-133`](file:///c:/Users/Omid/X/Code/autotheme/src/adapters/css-vars.js#L125-L133)
 - **Action Plan:**
-  - [ ] Add option/method to restore original classes and remove injected CSS custom properties on `stop()`.
+  - [x] Add option/method to restore original classes and remove injected CSS custom properties on `stop()`.
 
 ---
 
-### [ ] T16: Add Day-of-Week Rule Support
+### [x] T16: Add Day-of-Week Rule Support
 
 - **Files:** [`src/core/engine.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js), [`src/types/index.d.ts`](file:///c:/Users/Omid/X/Code/autotheme/src/types/index.d.ts)
 - **Action Plan:**
-  - [ ] Implement V1.1 Roadmap item: `day: 'friday'` or `day: [1, 5]` (Mon–Fri).
+  - [x] Implement V1.1 Roadmap item: `day: 'friday'` or `day: [1, 5]` (Mon–Fri).

@@ -46,6 +46,18 @@
   ],
   "author": "Omid Teimory",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/omid2007hope/autotheme.git"
+  },
+  "bugs": {
+    "url": "https://github.com/omid2007hope/autotheme/issues"
+  },
+  "homepage": "https://github.com/omid2007hope/autotheme#readme",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "peerDependencies": {
     "react": ">=16.8.0"
   },

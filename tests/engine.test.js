@@ -166,6 +166,53 @@ describe('auto()', () => {
     });
   });
 
+  describe('day-of-week rules', () => {
+    const rules = [
+      { day: 5, style: 'friday' }, // 5 = Friday
+      { day: 'monday', style: 'monday' },
+      { day: [0, 6], style: 'weekend' }, // Sun, Sat
+      { time: 12, style: 'afternoon' }
+    ];
+
+    it('matches numeric day (Friday)', () => {
+      // 2027-07-16 is a Friday
+      const now = new Date(2027, 6, 16, 14, 0, 0);
+      assert.strictEqual(auto(rules, 'fallback', now), 'friday');
+    });
+
+    it('matches string day (Monday)', () => {
+      // 2027-07-12 is a Monday
+      const now = new Date(2027, 6, 12, 14, 0, 0);
+      assert.strictEqual(auto(rules, 'fallback', now), 'monday');
+    });
+
+    it('matches array of days (Weekend)', () => {
+      // 2027-07-17 is a Saturday
+      const now = new Date(2027, 6, 17, 14, 0, 0);
+      assert.strictEqual(auto(rules, 'fallback', now), 'weekend');
+    });
+
+    it('falls back to time rule if day does not match', () => {
+      // 2027-07-14 is a Wednesday
+      const now = new Date(2027, 6, 14, 14, 0, 0);
+      assert.strictEqual(auto(rules, 'fallback', now), 'afternoon');
+    });
+    
+    it('evaluates time condition on day rule if provided', () => {
+      const combinedRules = [
+        { day: 'friday', time: 18, style: 'friday-night' },
+        { day: 'friday', style: 'friday-day' },
+      ];
+      // 2027-07-16 Friday 15:00 -> 'friday-day'
+      const afternoon = new Date(2027, 6, 16, 15, 0, 0);
+      assert.strictEqual(auto(combinedRules, 'fallback', afternoon), 'friday-day');
+      
+      // 2027-07-16 Friday 20:00 -> 'friday-night'
+      const evening = new Date(2027, 6, 16, 20, 0, 0);
+      assert.strictEqual(auto(combinedRules, 'fallback', evening), 'friday-night');
+    });
+  });
+
   describe('style object support', () => {
     it('returns style objects for time rules', () => {
       const rules = [

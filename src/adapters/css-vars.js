@@ -92,6 +92,11 @@ export function autoVars(cssEntryArray, target, interval = 60000) {
       if (typeof document !== 'undefined') {
         document.removeEventListener('visibilitychange', onVisibility);
       }
+      
+      // Clean DOM Teardown
+      for (const key of compiled.allVarKeys) {
+        el.style.removeProperty(key);
+      }
     },
   };
 }

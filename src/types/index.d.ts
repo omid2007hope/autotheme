@@ -44,6 +44,15 @@ export interface AutoRule<T = string | Record<string, string>> {
   until?: string;
 
   /**
+   * Day of the week.
+   * Can be a number (0-6, where 0 is Sunday), a string ('monday'),
+   * or an array of these.
+   * @example { day: 'friday' }
+   * @example { day: [1, 5] } // Mon and Fri
+   */
+  day?: number | string | (number | string)[];
+
+  /**
    * The style payload to return when this rule matches.
    * - Pass a **string** for class-based frameworks (Tailwind, Bootstrap)
    * - Pass an **object** for inline styles
@@ -78,6 +87,8 @@ export interface AutoVarRule {
   since?: string;
   /** End of date range. */
   until?: string;
+  /** Day of week (0-6 or string, or array) */
+  day?: number | string | (number | string)[];
   /** CSS custom properties to set on the target element. */
   vars: Record<string, string>;
 }
@@ -123,6 +134,7 @@ export interface CompiledRules<T = string | Record<string, string>> {
   exactOneOff: AutoRule<T>[];
   exactRecurring: AutoRule<T>[];
   dateRanges: AutoRule<T>[];
+  dayRules: AutoRule<T>[];
   timeRules: AutoRule<T>[];
   allVarKeys: string[];
 }

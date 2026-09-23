@@ -12,6 +12,7 @@ import {
   getMatchingTimeRule,
   parseTime,
   resolveRule,
+  isDayMatch,
 } from "./utils.js";
 
 /**
@@ -22,8 +23,9 @@ import {
  *   1. Exact date match (YYYY-MM-DD)
  *   2. Recurring date match (MM-DD)
  *   3. Date range match (since/until)
- *   4. Time-of-day match
- *   5. Fallback
+ *   4. Day-of-week match (0-6)
+ *   5. Time-of-day match
+ *   6. Fallback
  *
  * @param {Array<import('../types/index.js').AutoRule>} cssEntryArray - Array of eachRule objects
  * @param {string | object} [fallback=''] - Default style when no eachRule matches
@@ -64,6 +66,7 @@ export function compile(rules) {
       exactOneOff: [],
       exactRecurring: [],
       dateRanges: [],
+      dayRules: [],
       timeRules: [],
       allVarKeys: [],
     };
@@ -72,6 +75,7 @@ export function compile(rules) {
   const exactOneOff = [];
   const exactRecurring = [];
   const dateRanges = [];
+  const dayRules = [];
   const timeRules = [];
   const allVarKeys = new Set();
 
@@ -157,6 +161,17 @@ export function compile(rules) {
       }
       dateRanges.push(compiledRule);
     }
+    // If day + time
+    else if (eachRule.day != null && eachRule.time != null) {
+      if (parsedMinutes === null) {
+        console.warn(
+          '[autotheme] compile(): rule ignored — invalid time value (must be 0–23 or "HH:MM")',
+          eachRule,
+        );
+        continue;
+      }
+      dayRules.push(compiledRule);
+    }
     // If only time
     else if (eachRule.time != null) {
       if (parsedMinutes === null) {
@@ -171,6 +186,10 @@ export function compile(rules) {
     // If only range (since + until, no time)
     else if (eachRule.since != null && eachRule.until != null) {
       dateRanges.push(compiledRule);
+    }
+    // If only day
+    else if (eachRule.day != null) {
+      dayRules.push(compiledRule);
     }
     // since without until, or until without since — invalid
     else if (eachRule.since != null || eachRule.until != null) {
@@ -195,6 +214,7 @@ export function compile(rules) {
     exactOneOff,
     exactRecurring,
     dateRanges,
+    dayRules,
     timeRules,
     allVarKeys: Array.from(allVarKeys),
   };

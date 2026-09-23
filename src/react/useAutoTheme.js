@@ -35,7 +35,27 @@ import { auto, compile } from "../core/engine.js";
  */
 
 // rules e.g {{time: 6.00, style: ""}, {time: 6.00, style: ""}, etc}
-// was defined by developer
+function isEqual(a, b) {
+  if (a === b) return true;
+  if (!a || !b || typeof a !== "object" || typeof b !== "object") return false;
+
+  if (Array.isArray(a)) {
+    if (!Array.isArray(b) || a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) {
+      if (!isEqual(a[i], b[i])) return false;
+    }
+    return true;
+  }
+
+  const keysA = Object.keys(a);
+  const keysB = Object.keys(b);
+  if (keysA.length !== keysB.length) return false;
+  for (const key of keysA) {
+    if (!isEqual(a[key], b[key])) return false;
+  }
+  return true;
+}
+
 export function useAutoTheme(rules, fallback = "", options = {}) {
   // 1. The Safety Guard (Format Check):
   // If it's an object with our buckets instead of a raw array, it's precompiled.
@@ -54,7 +74,7 @@ export function useAutoTheme(rules, fallback = "", options = {}) {
   // e.g. A !== B
   const hasChanged = isPrecompiled
     ? rules !== rulesRef.current
-    : JSON.stringify(rules) !== JSON.stringify(rulesRef.current);
+    : !isEqual(rules, rulesRef.current);
 
   if (hasChanged || !compiledRef.current) {
     // initial memory address is you new/current memory address
@@ -66,7 +86,7 @@ export function useAutoTheme(rules, fallback = "", options = {}) {
   const memoizedCompiledRules = compiledRef.current;
 
   const fallbackRef = useRef(fallback);
-  if (JSON.stringify(fallback) !== JSON.stringify(fallbackRef.current)) {
+  if (!isEqual(fallback, fallbackRef.current)) {
     fallbackRef.current = fallback;
   }
   const memoizedFallback = fallbackRef.current;

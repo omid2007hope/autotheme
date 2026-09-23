@@ -118,6 +118,19 @@ export function observe(config) {
       if (typeof document !== 'undefined') {
         document.removeEventListener('visibilitychange', onVisibility);
       }
+      
+      // Clean DOM Teardown
+      if (typeof previousStyle === 'string' && previousStyle) {
+        applyClasses(el, previousStyle, '');
+      } else if (typeof previousStyle === 'object' && previousStyle !== null) {
+        for (const key of Object.keys(previousStyle)) {
+          if (key.startsWith('--')) {
+            el.style.removeProperty(key);
+          } else {
+            el.style[key] = '';
+          }
+        }
+      }
     },
   };
 }
