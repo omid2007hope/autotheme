@@ -147,7 +147,7 @@
 - **Files:** [`src/core/engine.js:209, 216, 223, 228`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js#L209)
 - **Problem:** If a matched rule lacks a `style` property (e.g. var-only rule passed to `auto()`), `auto()` returns `undefined` instead of `fallback`.
 - **Action Plan:**
-  - [ ] Check `if (rule != null && rule.style !== undefined) return rule.style;`.
+  - [x] Check `if (rule != null && rule.style !== undefined) return rule.style;`.
 
 ---
 

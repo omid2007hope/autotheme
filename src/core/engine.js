@@ -201,11 +201,7 @@ export function compile(rules) {
 }
 
 export function auto(rules, fallback = "", _now) {
-  if (
-    !rules ||
-    !Array.isArray(rules) ||
-    (Array.isArray(rules) && rules.length === 0)
-  ) {
+  if (!rules || (Array.isArray(rules) && rules.length === 0)) {
     return fallback;
   }
 
