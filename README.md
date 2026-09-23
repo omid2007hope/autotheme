@@ -60,7 +60,15 @@ That's it. **No providers. No context. No config files.** One function. Done.
 
 ## API Reference
 
+AutoTheme exports several functions to handle different frameworks and use cases:
+- `auto`: The core pure function for stateless string generation.
+- `useAutoTheme`: The React hook for live, automatically-updating themes.
+- `compile`: A performance utility for pre-calculating massive rule sets.
+- `autoVars`: A vanilla JS controller for injecting CSS variables.
+- `observe`: A vanilla JS controller for managing classes on a DOM element.
+
 ### `auto(rules, fallback?)`
+
 
 The core function. Pass an array of rules and an optional fallback style. Returns the matching `style` value — a class string or a style object.
 
@@ -134,21 +142,28 @@ const rules = [
 <div className={auto(rules, "bg-white")} />
 ```
 
-### CSS Custom Properties (Variables)
+### `autoVars(rules, target?, interval?)` (CSS Custom Properties)
+
+Instead of applying class strings, `autoVars` dynamically injects and updates **CSS Variables** (custom properties) on a target DOM element. This is perfect for Vanilla HTML/JS or massive legacy codebases where you want colors to shift automatically without migrating to utility classes.
 
 ```js
 import { autoVars } from "@omid2007hope/autotheme";
 
+// Start the live updates
 const controller = autoVars([
-  { time: 6,  vars: { "--bg": "#fffbeb", "--text": "#78350f", "--radius": "8px" } },
-  { time: 18, vars: { "--bg": "#0f172a", "--text": "#e2e8f0", "--radius": "12px" } },
-]);
+  { time: 6,  vars: { "--bg": "#fffbeb", "--text": "#78350f" } },
+  { time: 18, vars: { "--bg": "#0f172a", "--text": "#e2e8f0" } },
+], document.documentElement, { interval: 60000 });
 
-// Later, to stop live updates:
+// If you ever need to stop the live updates and remove the event listeners:
 // controller.stop();
 ```
 
-This injects variables directly into `:root` and **re-evaluates automatically** on a 60-second interval and on tab visibility changes. Pass an optional third argument to change the interval: `autoVars(rules, target, 30000)`. Returns a `{ stop() }` controller identical in shape to `observe()`.
+**How it works:**
+1. It immediately calculates the current time and applies the matching `vars` to the `target` (defaults to `:root` / `document.documentElement`).
+2. It sets up an interval clock (default: 60 seconds) to automatically shift the variables when a time boundary is crossed.
+3. It listens for tab visibility changes to instantly catch up on missed ticks when the user switches tabs.
+4. It returns a `controller` object with a `stop()` method to let you manually kill the interval clock and listeners if needed (e.g., in a framework's teardown/unmount step).
 
 ### Date & Seasonal Overrides
 
@@ -199,7 +214,7 @@ const rules = [
 
 ---
 
-## React Hook — Live Updates
+## React Hook — Live Updates (`useAutoTheme`)
 
 If the user leaves the tab open and the clock crosses a time boundary, the `auto()` function alone won't re-render. For **live, automatic re-renders**, use the React hook:
 
@@ -212,7 +227,7 @@ const rules = [
 ];
 
 export default function App() {
-  const currentStyle = useAutoTheme(rules, "bg-gray-100");
+  const currentStyle = useAutoTheme(rules, "bg-gray-100", { interval: 60000 });
 
   return (
     <div className={`min-h-screen ${currentStyle}`}>
@@ -222,25 +237,46 @@ export default function App() {
 }
 ```
 
-The hook internally ticks every 60 seconds (configurable) and re-evaluates rules. It also responds to `visibilitychange` events — so when the user switches back to the tab, it immediately checks the clock.
+The hook internally ticks every 60 seconds (configurable via the third parameter) and re-evaluates rules. It automatically responds to `visibilitychange` events, ensuring the UI perfectly catches up when the user switches back to your tab.
+
+### High-Performance React (Pre-compiled rules with `compile`)
+
+In React, declaring a `rules` array directly inside the component creates a new array in memory on every render. `useAutoTheme` protects against this by performing a fast `JSON.stringify` comparison under the hood. 
+
+However, if you are passing a **massive number of rules** (e.g., 1,440 rules for minute-by-minute UI changes), stringifying the array on every keystroke or state change will cause CPU lag. For these power-user scenarios, you can bypass the stringify check entirely by **pre-compiling** your rules outside the component:
 
 ```jsx
-// Custom interval (check every 30 seconds)
-const style = useAutoTheme(rules, fallback, { interval: 30000 });
+import { compile } from "@omid2007hope/autotheme";
+import { useAutoTheme } from "@omid2007hope/autotheme/react";
+
+// 1. Compile the rules ONCE outside the component
+const massiveRuleset = compile([
+  { time: "00:00", style: "bg-slate-950" },
+  /* ... 1,000+ more rules ... */
+  { time: "23:59", style: "bg-slate-900" }
+]);
+
+export default function App() {
+  // 2. Pass the pre-compiled object directly to the hook.
+  // The hook instantly recognizes it is pre-compiled and skips the JSON.stringify check!
+  const currentStyle = useAutoTheme(massiveRuleset, "bg-gray-100");
+
+  return <div className={currentStyle}>...</div>;
+}
 ```
 
 ---
 
-## Vanilla JS / HTML5
+## Vanilla JS DOM Observer (`observe`)
 
-No React? No problem. Use the DOM observer directly:
+No React? No problem. If you are building a Vanilla JS or standard HTML5 project, you can use the `observe` function to let AutoTheme automatically manage the classes on a DOM element for you.
 
 ```html
 <script type="module">
   import { observe } from "@omid2007hope/autotheme";
 
-  observe({
-    target: document.documentElement,
+  const controller = observe({
+    target: document.documentElement, // or a selector like '#my-app'
     rules: [
       { time: 6,  style: "light-theme" },
       { time: 18, style: "dark-theme" },
@@ -248,10 +284,14 @@ No React? No problem. Use the DOM observer directly:
     fallback: "light-theme",
     interval: 60000,
   });
+
+  // Automatically applies classes and starts the background clock.
+  // To kill the observer (e.g. during an SPA unmount):
+  // controller.stop();
 </script>
 ```
 
-This adds/removes classes on the target element automatically.
+`observe()` calculates the differences between the old theme and the new theme, cleanly removing the old classes and adding the new ones without wiping out any other custom classes you manually added to the target element.
 
 ---
 
