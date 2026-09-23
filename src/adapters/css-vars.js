@@ -1,3 +1,5 @@
+import { tick } from "../core/utils";
+
 /**
  * AutoTheme CSS Variables Adapter.
  * Dynamically injects/removes CSS custom properties on a target element.
@@ -6,12 +8,6 @@
  * @module adapters/css-vars
  */
 
-import {
-
-  isInDateRange,
-  isExactDateMatch,
-  getMatchingTimeRule,
-} from "../core/utils.js";
 import { compile } from "../core/engine.js";
 
 /**
@@ -43,66 +39,16 @@ import { compile } from "../core/engine.js";
  * controller.stop();
  */
 export function autoVars(cssEntryArray, target, interval = 60000) {
-  const el = target || (typeof document !== 'undefined' ? document.documentElement : null);
+  const el =
+    target ||
+    (typeof document !== "undefined" ? document.documentElement : null);
   if (!el) return { stop() {} };
   const compiled = compile(cssEntryArray);
 
-  const evaluateTimeMatches = (matchedRules, totalMinutes) => {
-    if (matchedRules.length === 0) return null;
-    const hasTimeRule = matchedRules.some((r) => r.time != null);
-    if (hasTimeRule) {
-      const normalizedTimeRules = matchedRules.map((r) =>
-        r.time != null ? r : { ...r, _minutes: 0 },
-      );
-      // Sort locally since utils getMatchingTimeRule no longer sorts
-      normalizedTimeRules.sort((a, b) => b._minutes - a._minutes);
-      return getMatchingTimeRule(normalizedTimeRules, totalMinutes);
-    }
-    return matchedRules[0];
-  };
-
-  function tick() {
-    const now = new Date();
-    const totalMinutes = now.getHours() * 60 + now.getMinutes();
-
-    let matched = evaluateTimeMatches(
-      compiled.exactOneOff.filter((r) => isExactDateMatch(r, now)),
-      totalMinutes,
-    );
-
-    if (!matched) {
-      matched = evaluateTimeMatches(
-        compiled.exactRecurring.filter((r) => isExactDateMatch(r, now)),
-        totalMinutes,
-      );
-    }
-
-    if (!matched) {
-      matched = evaluateTimeMatches(
-        compiled.dateRanges.filter((r) => isInDateRange(r, now)),
-        totalMinutes,
-      );
-    }
-
-    if (!matched) {
-      matched = getMatchingTimeRule(compiled.timeRules, totalMinutes);
-    }
-
-    if (!matched || !matched.vars) return;
-
-    // Remove ALL custom properties that any rule could have set
-    for (const key of compiled.allVarKeys) {
-      el.style.removeProperty(key);
-    }
-
-    // Set the matched vars
-    for (const [key, value] of Object.entries(matched.vars)) {
-      el.style.setProperty(key, value);
-    }
-  }
+  evaluateTimeMatches(matchedRules, totalMinutes);
 
   // Initial evaluation
-  tick();
+  tick(compiled);
 
   // Sync to the next boundary to prevent timer drift
   let intervalId;
@@ -114,20 +60,23 @@ export function autoVars(cssEntryArray, target, interval = 60000) {
 
   // Re-evaluate when the user returns to the tab
   const onVisibility = () => {
-    if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+    if (
+      typeof document !== "undefined" &&
+      document.visibilityState === "visible"
+    ) {
       tick();
     }
   };
-  if (typeof document !== 'undefined') {
-    document.addEventListener('visibilitychange', onVisibility);
+  if (typeof document !== "undefined") {
+    document.addEventListener("visibilitychange", onVisibility);
   }
 
   return {
     stop() {
       clearTimeout(timeoutId);
       if (intervalId) clearInterval(intervalId);
-      if (typeof document !== 'undefined') {
-        document.removeEventListener('visibilitychange', onVisibility);
+      if (typeof document !== "undefined") {
+        document.removeEventListener("visibilitychange", onVisibility);
       }
     },
   };

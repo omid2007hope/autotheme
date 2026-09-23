@@ -157,3 +157,57 @@ export function getMatchingTimeRule(timeRules, totalMinutes) {
   // (e.g., it's 2 AM and the last rule starts at 22:00 — that's still the active one)
   return timeRules[0];
 }
+
+export const evaluateTimeMatches = (matchedRules, totalMinutes) => {
+  if (matchedRules.length === 0) return null;
+  const hasTimeRule = matchedRules.some((r) => r.time != null);
+  if (hasTimeRule) {
+    const normalizedTimeRules = matchedRules.map((r) =>
+      r.time != null ? r : { ...r, _minutes: 0 },
+    );
+    // Sort locally since utils getMatchingTimeRule no longer sorts
+    normalizedTimeRules.sort((a, b) => b._minutes - a._minutes);
+    return getMatchingTimeRule(normalizedTimeRules, totalMinutes);
+  }
+  return matchedRules[0];
+};
+
+export function tick(compiled) {
+  const now = new Date();
+  const totalMinutes = now.getHours() * 60 + now.getMinutes();
+
+  let matched = evaluateTimeMatches(
+    compiled.exactOneOff.filter((r) => isExactDateMatch(r, now)),
+    totalMinutes,
+  );
+
+  if (!matched) {
+    matched = evaluateTimeMatches(
+      compiled.exactRecurring.filter((r) => isExactDateMatch(r, now)),
+      totalMinutes,
+    );
+  }
+
+  if (!matched) {
+    matched = evaluateTimeMatches(
+      compiled.dateRanges.filter((r) => isInDateRange(r, now)),
+      totalMinutes,
+    );
+  }
+
+  if (!matched) {
+    matched = getMatchingTimeRule(compiled.timeRules, totalMinutes);
+  }
+
+  if (!matched || !matched.vars) return;
+
+  // Remove ALL custom properties that any rule could have set
+  for (const key of compiled.allVarKeys) {
+    el.style.removeProperty(key);
+  }
+
+  // Set the matched vars
+  for (const [key, value] of Object.entries(matched.vars)) {
+    el.style.setProperty(key, value);
+  }
+}

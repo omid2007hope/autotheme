@@ -11,6 +11,8 @@ import {
   isInDateRange,
   getMatchingTimeRule,
   parseTime,
+  evaluateTimeMatches,
+  tick,
 } from "./utils.js";
 
 /**
@@ -202,64 +204,12 @@ export function auto(cssEntryArray, fallback = "", _now) {
 
   const compiled = compile(cssEntryArray);
   const now = _now || new Date();
-  const totalMinutes = now.getHours() * 60 + now.getMinutes();
 
   // Helper to evaluate time conditions for rules that matched a date condition.
   // Returns the matched rule object, or null if nothing matched.
   // This lets callers distinguish "no match" (null) from "matched with falsy style".
-  const evaluateTimeMatches = (matchedRules) => {
-    // Check if exist or is an array
-    if (!Array.isArray(matchedRules) || matchedRules.length === 0) return null;
 
-    // If any css has a time condition, we must evaluate them together
-    const hasTimeRule = matchedRules.some((r) => r.time != null);
-    if (hasTimeRule) {
-      // Treat rules without a time condition as active from midnight (time: 0)
-      const normalizedTimeRules = matchedRules.map((r) =>
-        r.time != null ? r : { ...r, _minutes: 0 },
-      );
-      // Sort locally since utils getMatchingTimeRule no longer sorts
-      normalizedTimeRules.sort((a, b) => b._minutes - a._minutes);
-      
-      // T05: If time is before the earliest specified rule for this date and no midnight rule exists,
-      // return null so lower-priority time rules or fallback can apply instead of wrapping around.
-      const earliestRule = normalizedTimeRules[normalizedTimeRules.length - 1];
-      if (earliestRule._minutes > 0 && totalMinutes < earliestRule._minutes) {
-        return null;
-      }
-
-      return getMatchingTimeRule(normalizedTimeRules, totalMinutes); // rule | null
-    }
-
-    return matchedRules[0]; // rule object
-  };
-
-  // Priority 1: One-off exact date (YYYY-MM-DD)
-  const matchedOneOffs = compiled.exactOneOff.filter((r) =>
-    isExactDateMatch(r, now),
-  );
-  const oneOffRule = evaluateTimeMatches(matchedOneOffs);
-  if (oneOffRule != null) return oneOffRule.style;
-
-  // Priority 2: Recurring exact date (MM-DD)
-  const matchedRecurring = compiled.exactRecurring.filter((r) =>
-    isExactDateMatch(r, now),
-  );
-  const recurringRule = evaluateTimeMatches(matchedRecurring);
-  if (recurringRule != null) return recurringRule.style;
-
-  // Priority 3: Date ranges (since/until)
-  const matchedRanges = compiled.dateRanges.filter((r) =>
-    isInDateRange(r, now),
-  );
-  const rangeRule = evaluateTimeMatches(matchedRanges);
-  if (rangeRule != null) return rangeRule.style;
-
-  // Priority 4: Time-of-day
-  const matchedTime = getMatchingTimeRule(compiled.timeRules, totalMinutes);
-  if (matchedTime != null) {
-    return matchedTime.style;
-  }
+  tick(compiled);
 
   // Priority 5: Fallback
   return fallback;
