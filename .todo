@@ -120,7 +120,7 @@
 - **Files:** [`src/react/useAutoTheme.js:41-50`](file:///c:/Users/Omid/X/Code/autotheme/src/react/useAutoTheme.js#L41-L50)
 - **Problem:** `JSON.stringify(rules)` runs up to twice per render cycle, creating CPU lag on large rule sets (e.g. 1440-rule minute resolution).
 - **Action Plan:**
-  - [x] Replace naive `JSON.stringify` with shallow array comparison or accept pre-compiled rules directly.
+  - [ ] Replace naive `JSON.stringify` with shallow array comparison or accept pre-compiled rules directly.
 
 ---
 
@@ -129,7 +129,7 @@
 - **Files:** [`src/adapters/css-vars.js:50-90`](file:///c:/Users/Omid/X/Code/autotheme/src/adapters/css-vars.js#L50-L90), [`src/core/engine.js:186-230`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js#L186-L230)
 - **Problem:** ~40 lines of rule matching and priority resolution are copy-pasted between `engine.js` and `css-vars.js`.
 - **Action Plan:**
-  - [ ] Extract `resolveRule(compiled, now)` in `engine.js` and import it in `css-vars.js`.
+  - [x] Extract `resolveRule(compiled, now)` in `engine.js` and import it in `css-vars.js`.
 
 ---
 
@@ -138,7 +138,7 @@
 - **Files:** [`examples/html-css-vars/index.html:62-68`](file:///c:/Users/Omid/X/Code/autotheme/examples/html-css-vars/index.html#L62-L68)
 - **Problem:** Calling `setInterval(() => autoVars(rules), 60000)` on top of `autoVars()` creates cascading leaked timers.
 - **Action Plan:**
-  - [ ] Remove the redundant outer `setInterval` from the example.
+  - [x] Remove the redundant outer `setInterval` from the example.
 
 ---
 

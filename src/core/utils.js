@@ -158,56 +158,59 @@ export function getMatchingTimeRule(timeRules, totalMinutes) {
   return timeRules[0];
 }
 
-export const evaluateTimeMatches = (matchedRules, totalMinutes) => {
-  if (matchedRules.length === 0) return null;
-  const hasTimeRule = matchedRules.some((r) => r.time != null);
-  if (hasTimeRule) {
-    const normalizedTimeRules = matchedRules.map((r) =>
-      r.time != null ? r : { ...r, _minutes: 0 },
-    );
-    // Sort locally since utils getMatchingTimeRule no longer sorts
-    normalizedTimeRules.sort((a, b) => b._minutes - a._minutes);
-    return getMatchingTimeRule(normalizedTimeRules, totalMinutes);
-  }
-  return matchedRules[0];
-};
-
-export function tick(compiled) {
-  const now = new Date();
+/**
+ * Resolves the highest priority matching rule for a given date and time.
+ * @param {import('../types/index.js').CompiledRules} compiled - The compiled rules object
+ * @param {Date} now - The current date
+ * @returns {import('../types/index.js').AutoRule | null} The matched rule or null
+ */
+export function resolveRule(compiled, now) {
   const totalMinutes = now.getHours() * 60 + now.getMinutes();
 
-  let matched = evaluateTimeMatches(
-    compiled.exactOneOff.filter((r) => isExactDateMatch(r, now)),
-    totalMinutes,
+  // Helper to evaluate time conditions for rules that matched a date condition.
+  const evaluateTimeMatches = (matchedRules) => {
+    if (!Array.isArray(matchedRules) || matchedRules.length === 0) return null;
+
+    const hasTimeRule = matchedRules.some((r) => r.time != null);
+    if (hasTimeRule) {
+      const normalizedTimeRules = matchedRules.map((r) =>
+        r.time != null ? r : { ...r, _minutes: 0 },
+      );
+      normalizedTimeRules.sort((a, b) => b._minutes - a._minutes);
+      
+      const earliestRule = normalizedTimeRules[normalizedTimeRules.length - 1];
+      if (earliestRule._minutes > 0 && totalMinutes < earliestRule._minutes) {
+        return null;
+      }
+
+      return getMatchingTimeRule(normalizedTimeRules, totalMinutes);
+    }
+
+    return matchedRules[0];
+  };
+
+  // Priority 1: One-off exact date (YYYY-MM-DD)
+  const matchedOneOffs = compiled.exactOneOff.filter((r) =>
+    isExactDateMatch(r, now),
   );
+  const oneOffRule = evaluateTimeMatches(matchedOneOffs);
+  if (oneOffRule != null) return oneOffRule;
 
-  if (!matched) {
-    matched = evaluateTimeMatches(
-      compiled.exactRecurring.filter((r) => isExactDateMatch(r, now)),
-      totalMinutes,
-    );
-  }
+  // Priority 2: Recurring exact date (MM-DD)
+  const matchedRecurring = compiled.exactRecurring.filter((r) =>
+    isExactDateMatch(r, now),
+  );
+  const recurringRule = evaluateTimeMatches(matchedRecurring);
+  if (recurringRule != null) return recurringRule;
 
-  if (!matched) {
-    matched = evaluateTimeMatches(
-      compiled.dateRanges.filter((r) => isInDateRange(r, now)),
-      totalMinutes,
-    );
-  }
+  // Priority 3: Date ranges (since/until)
+  const matchedRanges = compiled.dateRanges.filter((r) =>
+    isInDateRange(r, now),
+  );
+  const rangeRule = evaluateTimeMatches(matchedRanges);
+  if (rangeRule != null) return rangeRule;
 
-  if (!matched) {
-    matched = getMatchingTimeRule(compiled.timeRules, totalMinutes);
-  }
-
-  if (!matched || !matched.vars) return;
-
-  // Remove ALL custom properties that any rule could have set
-  for (const key of compiled.allVarKeys) {
-    el.style.removeProperty(key);
-  }
-
-  // Set the matched vars
-  for (const [key, value] of Object.entries(matched.vars)) {
-    el.style.setProperty(key, value);
-  }
+  // Priority 4: Time-of-day
+  return getMatchingTimeRule(compiled.timeRules, totalMinutes);
 }
+

@@ -11,8 +11,7 @@ import {
   isInDateRange,
   getMatchingTimeRule,
   parseTime,
-  evaluateTimeMatches,
-  tick,
+  resolveRule,
 } from "./utils.js";
 
 /**
@@ -205,11 +204,8 @@ export function auto(cssEntryArray, fallback = "", _now) {
   const compiled = compile(cssEntryArray);
   const now = _now || new Date();
 
-  // Helper to evaluate time conditions for rules that matched a date condition.
-  // Returns the matched rule object, or null if nothing matched.
-  // This lets callers distinguish "no match" (null) from "matched with falsy style".
-
-  tick(compiled);
+  const matchedRule = resolveRule(compiled, now);
+  if (matchedRule != null) return matchedRule.style;
 
   // Priority 5: Fallback
   return fallback;

@@ -1,5 +1,3 @@
-import { tick } from "../core/utils";
-
 /**
  * AutoTheme CSS Variables Adapter.
  * Dynamically injects/removes CSS custom properties on a target element.
@@ -8,6 +6,12 @@ import { tick } from "../core/utils";
  * @module adapters/css-vars
  */
 
+import {
+
+  isExactDateMatch,
+  getMatchingTimeRule,
+  resolveRule,
+} from "../core/utils.js";
 import { compile } from "../core/engine.js";
 
 /**
@@ -39,16 +43,29 @@ import { compile } from "../core/engine.js";
  * controller.stop();
  */
 export function autoVars(cssEntryArray, target, interval = 60000) {
-  const el =
-    target ||
-    (typeof document !== "undefined" ? document.documentElement : null);
+  const el = target || (typeof document !== 'undefined' ? document.documentElement : null);
   if (!el) return { stop() {} };
   const compiled = compile(cssEntryArray);
 
-  evaluateTimeMatches(matchedRules, totalMinutes);
+  function tick() {
+    const now = new Date();
+    const matched = resolveRule(compiled, now);
+
+    if (!matched || !matched.vars) return;
+
+    // Remove ALL custom properties that any rule could have set
+    for (const key of compiled.allVarKeys) {
+      el.style.removeProperty(key);
+    }
+
+    // Set the matched vars
+    for (const [key, value] of Object.entries(matched.vars)) {
+      el.style.setProperty(key, value);
+    }
+  }
 
   // Initial evaluation
-  tick(compiled);
+  tick();
 
   // Sync to the next boundary to prevent timer drift
   let intervalId;
@@ -60,23 +77,20 @@ export function autoVars(cssEntryArray, target, interval = 60000) {
 
   // Re-evaluate when the user returns to the tab
   const onVisibility = () => {
-    if (
-      typeof document !== "undefined" &&
-      document.visibilityState === "visible"
-    ) {
+    if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
       tick();
     }
   };
-  if (typeof document !== "undefined") {
-    document.addEventListener("visibilitychange", onVisibility);
+  if (typeof document !== 'undefined') {
+    document.addEventListener('visibilitychange', onVisibility);
   }
 
   return {
     stop() {
       clearTimeout(timeoutId);
       if (intervalId) clearInterval(intervalId);
-      if (typeof document !== "undefined") {
-        document.removeEventListener("visibilitychange", onVisibility);
+      if (typeof document !== 'undefined') {
+        document.removeEventListener('visibilitychange', onVisibility);
       }
     },
   };

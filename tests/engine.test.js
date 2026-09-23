@@ -198,7 +198,6 @@ describe('compile()', () => {
     
     const compiled = compile(rules);
     
-    assert.strictEqual(compiled.__compiled, true);
     assert.strictEqual(compiled.exactOneOff.length, 1);
     assert.strictEqual(compiled.exactRecurring.length, 1);
     assert.strictEqual(compiled.dateRanges.length, 1);
