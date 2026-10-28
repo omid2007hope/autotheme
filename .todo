@@ -1,141 +1,269 @@
-1. Component Breakdown
-   What it is: @omid2007hope/autotheme (v1.7.0) — a zero-dependency JavaScript/TypeScript + React theming engine (src/index.js, src/react/useAutoTheme.js).
-   What it does: Evaluates time, day-of-week, date-range, and exact-date rules to return or apply CSS classes, inline style objects, or CSS custom properties.
-   How it works: compile() buckets rules by priority; resolveRule() resolves the highest-priority match against a Date; observe(), autoVars(), and useAutoTheme() sync on minute boundaries and visibilitychange.
-   Why it exists: Eliminates manual Date / timer / SSR hydration boilerplate for time- and season-aware UI styling.
-2. Findings (Bugs, Problems, Missing Items & Enhancements for v1.8)
-   🔴 Bugs & Logic Flaws
+# AutoTheme — v1.8 Release TODO & Quality Roadmap
 
-autoVars() 3rd parameter mismatch causes an infinite ~1ms timer loop
+> **Target:** High-Quality, Zero-Dependency, Production-Grade npm & SaaS Package (v1.8.0)  
+> **Progress:** `0 / 24` Tasks Completed (`0%`)
 
-Exact Lines: src/adapters/css-vars.js:45 & src/adapters/css-vars.js:72-76 vs. README.md:156 & src/types/index.d.ts:66-68, src/types/index.d.ts:172-176.
-Problem: README.md and index.d.ts pass { interval: 60000 } (an object) as the 3rd argument, but autoVars(cssEntryArray, target, interval = 60000) treats interval as a raw number. Passing { interval: 60000 } makes Date.now() % interval evaluate to NaN, causing setTimeout and setInterval to fire continuously every ~1ms.
+---
 
-Broken import { compile } in src/types/index.d.ts
+## 📊 Task Status Matrix
 
-Exact Lines: src/types/index.d.ts:1 and src/types/index.d.ts:148-150.
-Problem: Line 1 has import { compile } from "../core/engine"; while line 148 redeclares export declare function compile. When copied into dist/index.d.ts and dist/react/useAutoTheme.d.ts (package.json:28), ../core/engine does not exist (TS2307) and collides with the local compile declaration (TS2440).
+| ID | Priority | Category | Task | Target Files | Status |
+| :--- | :--- | :--- | :--- | :--- | :---: |
+| **T01** | `P0` Critical | Engine / Timer | Fix `autoVars()` options object parameter causing 1ms infinite loop | [`src/adapters/css-vars.js`](file:///c:/Users/Omid/X/Code/autotheme/src/adapters/css-vars.js) | ⏳ Pending |
+| **T02** | `P0` Critical | Types / Build | Remove broken `import { compile }` conflict in `.d.ts` declaration | [`src/types/index.d.ts`](file:///c:/Users/Omid/X/Code/autotheme/src/types/index.d.ts) | ⏳ Pending |
+| **T03** | `P0` Critical | Types / API | Support `CompiledRules<T>` across all core functions in TypeScript | [`src/types/index.d.ts`](file:///c:/Users/Omid/X/Code/autotheme/src/types/index.d.ts) | ⏳ Pending |
+| **T04** | `P0` Critical | Engine / Bug | Prevent incomplete `since`/`until` rules from hijacking daily time rules | [`src/core/engine.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js) | ⏳ Pending |
+| **T05** | `P1` High | Engine / Bug | Support `day` conditions in composite date and date-range rules | [`src/core/engine.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js), [`src/core/utils.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/utils.js) | ⏳ Pending |
+| **T06** | `P1` High | React / Hook | Fix `isEqual()` array vs object & missing property false-positives | [`src/react/useAutoTheme.js`](file:///c:/Users/Omid/X/Code/autotheme/src/react/useAutoTheme.js) | ⏳ Pending |
+| **T07** | `P1` High | CSS Vars / DOM | Clean up stale custom properties in `autoVars()` when rules expire | [`src/adapters/css-vars.js`](file:///c:/Users/Omid/X/Code/autotheme/src/adapters/css-vars.js) | ⏳ Pending |
+| **T08** | `P1` High | Observer / DOM | Guard against missing config & handle mixed string/object transitions | [`src/core/observer.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/observer.js) | ⏳ Pending |
+| **T09** | `P1` High | DOM Adapter | Preserve pre-existing host classes during class transitions & `.stop()` | [`src/adapters/dom.js`](file:///c:/Users/Omid/X/Code/autotheme/src/adapters/dom.js), [`src/core/observer.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/observer.js) | ⏳ Pending |
+| **T10** | `P1` High | Validation | Harden date, time, and day bounds checking across utils & engine | [`src/core/engine.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js), [`src/core/utils.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/utils.js) | ⏳ Pending |
+| **T11** | `P1` High | Engine / Dates | Support mixed-format `since`/`until` ranges (`YYYY-MM-DD` + `MM-DD`) | [`src/core/utils.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/utils.js) | ⏳ Pending |
+| **T12** | `P1` High | React / Hook | Prevent unhandled crash in `useAutoTheme()` when `options` is `null` | [`src/react/useAutoTheme.js`](file:///c:/Users/Omid/X/Code/autotheme/src/react/useAutoTheme.js) | ⏳ Pending |
+| **T13** | `P2` Medium | Types / Build | Separate root and React entry point type declarations in `dist/` | [`package.json`](file:///c:/Users/Omid/X/Code/autotheme/package.json), [`src/types`](file:///c:/Users/Omid/X/Code/autotheme/src/types) | ⏳ Pending |
+| **T14** | `P2` Medium | Build Pipeline | Remove redundant `'use client';` injection from build script | [`package.json`](file:///c:/Users/Omid/X/Code/autotheme/package.json) | ⏳ Pending |
+| **T15** | `P2` Medium | Types / API | Add `now?: Date` parameter to `auto()` TypeScript declaration | [`src/types/index.d.ts`](file:///c:/Users/Omid/X/Code/autotheme/src/types/index.d.ts) | ⏳ Pending |
+| **T16** | `P3` Low | Quality / Tests | Add comprehensive unit tests for `useAutoTheme`, `observe`, & `autoVars` | [`tests/`](file:///c:/Users/Omid/X/Code/autotheme/tests) | ⏳ Pending |
+| **T17** | `P3` Low | Documentation | Document `day` rule in `README.md` and include in engine warning | [`README.md`](file:///c:/Users/Omid/X/Code/autotheme/README.md), [`src/core/engine.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js) | ⏳ Pending |
+| **T18** | `P3` Low | Architecture | Remove unused imports and dead `isSsr()` utility | [`src/core/engine.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js), [`src/core/utils.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/utils.js) | ⏳ Pending |
+| **T19** | `P3` Low | Polish | Update outdated README badges/content and clean corrupted test UTF-8 | [`README.md`](file:///c:/Users/Omid/X/Code/autotheme/README.md), [`tests/bugfix.test.js`](file:///c:/Users/Omid/X/Code/autotheme/tests/bugfix.test.js) | ⏳ Pending |
+| **T20** | `P3` Low | Repo Hygiene | Remove scratch files (`test.ts`, `scratch/`) and clean `.npmignore` | [`test.ts`](file:///c:/Users/Omid/X/Code/autotheme/test.ts), [`.npmignore`](file:///c:/Users/Omid/X/Code/autotheme/.npmignore) | ⏳ Pending |
+| **T21** | `P4` Polish | Performance | Skip redundant DOM writes in `autoVars()` when active vars match | [`src/adapters/css-vars.js`](file:///c:/Users/Omid/X/Code/autotheme/src/adapters/css-vars.js) | ⏳ Pending |
+| **T22** | `P4` Polish | Performance | Pre-parse date, range, and day strings during `compile()` | [`src/core/engine.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js), [`src/core/utils.js`](file:///c:/Users/Omid/X/Code/autotheme/src/core/utils.js) | ⏳ Pending |
+| **T23** | `P4` Polish | DX / Feature | Support CSS selector strings for `target` in `autoVars()` | [`src/adapters/css-vars.js`](file:///c:/Users/Omid/X/Code/autotheme/src/adapters/css-vars.js) | ⏳ Pending |
+| **T24** | `P4` Polish | CI / Quality | Add `tsc --noEmit` validation step to `npm test` and CI workflow | [`package.json`](file:///c:/Users/Omid/X/Code/autotheme/package.json), [`.github/workflows/ci.yml`](file:///c:/Users/Omid/X/Code/autotheme/.github/workflows/ci.yml) | ⏳ Pending |
 
-TypeScript declarations reject CompiledRules<T> from compile()
+---
 
-Exact Lines: src/types/index.d.ts:103, src/types/index.d.ts:148-150, src/types/index.d.ts:160-163, src/types/index.d.ts:172-176, src/types/index.d.ts:198-202.
-Problem: auto(), useAutoTheme(), observe(), autoVars(), and compile() are typed to only accept AutoRule<T>[] (or AutoVarRule[]), not CompiledRules<T>. Following the pre-compilation pattern in README.md:253-262 produces a TypeScript type error.
+## 🔴 P0 — Critical (Release Blockers, Runtime Hangs & Compiler Errors)
 
-Incomplete since/until rules with time or day hijack daily rules instead of warning
+### [ ] T01: Fix `autoVars()` Options Object Parameter Causing 1ms Infinite Loop
+- **Files:** [`src/adapters/css-vars.js:45, 72-76`](file:///c:/Users/Omid/X/Code/autotheme/src/adapters/css-vars.js#L45), [`README.md:156`](file:///c:/Users/Omid/X/Code/autotheme/README.md#L156), [`src/types/index.d.ts:66-68, 172-176`](file:///c:/Users/Omid/X/Code/autotheme/src/types/index.d.ts#L66)
+- **Problem:** `README.md` and TypeScript definitions document passing `{ interval: 60000 }` as the 3rd argument (`autoVars(rules, el, { interval: 60000 })`). However, `autoVars()` assumes `interval` is a primitive number. When an object is passed, `Date.now() % interval` evaluates to `NaN`, causing `setTimeout` and `setInterval` to continuously spin every ~1ms.
+- **Action Plan:**
+  - [ ] Accept both a number (`60000`) and an options object (`{ interval: 60000 }`).
+  - [ ] Normalize interval: `const ms = typeof interval === 'object' && interval ? interval.interval ?? 60000 : Number(interval) || 60000`.
+  - [ ] Add unit test verifying `{ interval: 60000 }` sets timer correctly without infinite spin.
 
-Exact Lines: src/core/engine.js:176-200.
-Problem: else if (eachRule.time != null) (line 176) and else if (eachRule.day != null) (line 191) come before else if (eachRule.since != null || eachRule.until != null) (line 195). A rule missing until like { since: '12-01', time: 18, style: 'winter' } never reaches line 195; it is silently pushed into timeRules and activates every day of the year at 18:00.
+---
 
-day constraint is silently ignored on date and since/until rules
+### [ ] T02: Remove Broken `import { compile }` Conflict in `.d.ts` Declaration
+- **Files:** [`src/types/index.d.ts:1, 148-150`](file:///c:/Users/Omid/X/Code/autotheme/src/types/index.d.ts#L1), [`package.json:28`](file:///c:/Users/Omid/X/Code/autotheme/package.json#L28)
+- **Problem:** `src/types/index.d.ts` starts with `import { compile } from "../core/engine";` while line 148 declares `export declare function compile...`. This causes `TS2440` (import declaration conflicts with local declaration) and `TS2307` (`Cannot find module '../core/engine'`) when copied into `dist/`.
+- **Action Plan:**
+  - [ ] Remove the invalid relative import from `src/types/index.d.ts`.
+  - [ ] Validate `.d.ts` compilation clean with `npx tsc --noEmit`.
 
-Exact Lines: src/core/engine.js:103-163, src/core/engine.js:187-189, and src/core/utils.js:235-253.
-Problem: A composite rule like { since: '06-01', until: '08-31', day: [0, 6], style: 'summer-weekend' } is placed in dateRanges, where resolveRule() only checks isInDateRange(r, now) and never checks isDayMatch(r, now).
+---
 
-isEqual() in useAutoTheme.js has two false-positive bugs
+### [ ] T03: Support `CompiledRules<T>` Across Core Functions in TypeScript
+- **Files:** [`src/types/index.d.ts:103, 148-150, 160-163, 172-176, 198-202`](file:///c:/Users/Omid/X/Code/autotheme/src/types/index.d.ts#L103)
+- **Problem:** `auto()`, `useAutoTheme()`, `observe()`, and `autoVars()` only type-accept raw rule arrays (`AutoRule<T>[]` or `AutoVarRule[]`), throwing TypeScript errors when developers pass pre-compiled rules from `compile()` per the documentation.
+- **Action Plan:**
+  - [ ] Update function signatures to accept `AutoRule<T>[] | CompiledRules<T>`.
+  - [ ] Update `compile()` to accept `AutoRule<T>[] | CompiledRules<T> | AutoVarRule[]`.
 
-Exact Lines: src/react/useAutoTheme.js:42-56.
-Problem:
-Line 42 checks if (Array.isArray(a)) but does not reject if (Array.isArray(b)) return false; when a is a non-array object and b is an array.
-Lines 53–55 iterate for (const key of keysA) and call isEqual(a[key], b[key]) without checking Object.prototype.hasOwnProperty.call(b, key). If a is { time: undefined } and b is { date: undefined }, a['time'] and b['time'] are both undefined, returning true.
+---
 
-autoVars() leaves stale CSS variables on the DOM when rules stop matching
+### [ ] T04: Prevent Incomplete `since`/`until` Rules from Hijacking Daily Time Rules
+- **Files:** [`src/core/engine.js:176-200`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js#L176-L200)
+- **Problem:** In `compile()`, `else if (eachRule.time != null)` (line 176) and `else if (eachRule.day != null)` (line 191) precede `else if (eachRule.since != null || eachRule.until != null)` (line 195). A rule missing `until` like `{ since: '12-01', time: 18, style: 'winter' }` is silently pushed into `timeRules` and runs every single day of the year.
+- **Action Plan:**
+  - [ ] Move incomplete range check (`(eachRule.since != null) !== (eachRule.until != null)`) before evaluating `time` or `day`.
+  - [ ] Emit `console.warn` and discard the invalid incomplete rule.
 
-Exact Lines: src/adapters/css-vars.js:52-59.
-Problem: if (!matched || !matched.vars) return; (line 54) exits before the cleanup loop (lines 57–59). When a date-specific or day-specific rule expires and resolveRule() returns null, its previously injected CSS variables are never removed from the target element.
+---
 
-observe() crashes on null/missing config and fails to clean up when switching between class strings and style objects
+## 🟠 P1 — High (Logic Flaws, State Leaks & Edge Cases)
 
-Exact Lines: src/core/observer.js:37-45 and src/core/observer.js:66-90.
-Problem:
-Line 40 destructures config without a default config = {}, throwing a TypeError if observe() is called without arguments.
-Lines 67–88 only clean up previousStyle if its type (string vs object) matches nextStyle. Transitioning from an inline style object rule to a class string rule leaves the inline styles on the element (and vice-versa).
+### [ ] T05: Support `day` Conditions in Composite Date and Date-Range Rules
+- **Files:** [`src/core/engine.js:103-163, 187-189`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js#L103), [`src/core/utils.js:235-253`](file:///c:/Users/Omid/X/Code/autotheme/src/core/utils.js#L235)
+- **Problem:** Composite rules combining a date or range with a day (e.g., `{ since: '06-01', until: '08-31', day: [0, 6], style: 'summer-weekend' }`) are placed in `dateRanges` or exact date buckets where `resolveRule()` never invokes `isDayMatch()`.
+- **Action Plan:**
+  - [ ] Check `isDayMatch(r, now)` when evaluating matched date ranges and exact dates.
+  - [ ] Add test for date range + day combinations.
 
-observe() / applyClasses() strips pre-existing classes from the target element
+---
 
-Exact Lines: src/adapters/dom.js:19-24 and src/core/observer.js:123-124.
-Problem: If the target element originally had a class (e.g., flex or text-black) before observe() was called, and a rule also includes that class, el.classList.remove(...toRemove) removes the host's original class when transitioning to another rule or calling controller.stop(), contradicting README.md:294.
+### [ ] T06: Fix `isEqual()` False-Positive Equality Bugs in React Hook
+- **Files:** [`src/react/useAutoTheme.js:42-56`](file:///c:/Users/Omid/X/Code/autotheme/src/react/useAutoTheme.js#L42-L56)
+- **Problem:**
+  - Line 42 checks `if (Array.isArray(a))` without checking `if (Array.isArray(b))` when `a` is a plain object and `b` is an array.
+  - Lines 53–55 iterate keys of `a` without checking `Object.prototype.hasOwnProperty.call(b, key)`. Objects with different keys having `undefined` values compare as equal.
+- **Action Plan:**
+  - [ ] Guard `Array.isArray(a) !== Array.isArray(b)`.
+  - [ ] Verify `Object.prototype.hasOwnProperty.call(b, key)` for each key.
+  - [ ] Add unit tests for asymmetric comparison edge cases.
 
-Loose date, time, and day validation in compile(), parseDate(), and parseTime()
+---
 
-Exact Lines:
-src/core/engine.js:104-113 & src/core/engine.js:131-140: isValidDate only checks dateStr.length >= 4 && dateStr.length <= 10. Non-hyphenated strings/numbers like { date: 20271031 } (length 8) pass validation without warning and get pushed to exactRecurring.
-src/core/utils.js:23-44: parseDate() does not check !isNaN(...) or valid calendar bounds (month 1–12, day 1–31), so "foo-bar" or "99-99" returns { month: NaN, day: NaN } or { month: 99, day: 99 }.
-src/core/engine.js:150-193: since, until, and day are never validated in compile(), so invalid ranges or invalid day names ({ day: 'funday' }) never emit console.warn.
-src/core/utils.js:158-179: parseTime() uses parseInt without checking full numeric format or parts.length === 2, so "10:20pm" silently parses as 10:20, "12px" as 12:00, "-0:30" as 00:30, and floats like time: 6.3 parse as 6.3 \* 60 = 378 (06:18).
+### [ ] T07: Clean Up Stale Custom Properties in `autoVars()` When Rules Expire
+- **Files:** [`src/adapters/css-vars.js:52-59`](file:///c:/Users/Omid/X/Code/autotheme/src/adapters/css-vars.js#L52-L59)
+- **Problem:** `if (!matched || !matched.vars) return;` (line 54) exits before property removal (lines 57–59). When a temporary date or day rule expires and no new rule matches, injected CSS custom properties remain permanently stuck on the DOM element.
+- **Action Plan:**
+  - [ ] When `!matched || !matched.vars`, clear all tracked variables from `compiled.allVarKeys` and return cleanly.
+  - [ ] Add unit test verifying teardown on expired match.
 
-Mixed-format since/until date range (YYYY-MM-DD with MM-DD) silently ignores the year
+---
 
-Exact Lines: src/core/utils.js:131-142.
-Problem: if (since.year != null && until.year != null) requires both endpoints to have a year; if only one has a year, it silently degrades to an annual recurring MMDD check.
+### [ ] T08: Guard `observe()` Against Missing Config & Handle Mixed Style Transitions
+- **Files:** [`src/core/observer.js:37-45, 66-90`](file:///c:/Users/Omid/X/Code/autotheme/src/core/observer.js#L37-L45)
+- **Problem:**
+  - Calling `observe()` or `observe(null)` throws unhandled `TypeError: Cannot destructure property 'target' of 'config' as it is undefined`.
+  - Transitions between class strings and style objects fail to clear the opposing style mechanism.
+- **Action Plan:**
+  - [ ] Add default `config = {}` and validate `target` defensively.
+  - [ ] If `previousStyle` was an object and `nextStyle` is a string, remove inline styles; if `previousStyle` was a string and `nextStyle` is an object, remove classes.
 
-useAutoTheme() crashes if options is null
+---
 
-Exact Lines: src/react/useAutoTheme.js:59-64.
-Problem: const { interval = 60000 } = options; throws a TypeError if a caller passes null as the 3rd argument (options = {} only defaults undefined).
-🟠 Build, Packaging & Type Declaration Problems
+### [ ] T09: Preserve Pre-Existing Host Classes in DOM Adapter
+- **Files:** [`src/adapters/dom.js:19-24`](file:///c:/Users/Omid/X/Code/autotheme/src/adapters/dom.js#L19-L24), [`src/core/observer.js:123-124`](file:///c:/Users/Omid/X/Code/autotheme/src/core/observer.js#L123-L124)
+- **Problem:** `applyClasses` removes all tokens present in `previousClasses`. If the target element originally had a class in HTML before `observe()` was started (e.g., `text-black`), switching rules or calling `.stop()` strips the element's original class.
+- **Action Plan:**
+  - [ ] Snapshot the target element's initial classes when `observe()` starts.
+  - [ ] Never remove classes that belonged to the initial class snapshot.
 
-Root and ./react entry points copy the exact same .d.ts file, exposing wrong exports on each
+---
 
-Exact Lines: package.json:28 and src/types/index.d.ts:148-202.
-Problem: Copying src/types/index.d.ts to both dist/index.d.ts and dist/react/useAutoTheme.d.ts tells TypeScript that useAutoTheme is exported from @omid2007hope/autotheme (it is not in src/index.js:8-10) and that auto, compile, autoVars, observe are exported from @omid2007hope/autotheme/react (they are not in src/react/useAutoTheme.js:59).
+### [ ] T10: Harden Date, Time, and Day Bounds Checking Across Utils & Engine
+- **Files:** [`src/core/engine.js:104-140, 150-193`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js#L104), [`src/core/utils.js:23-44, 158-179`](file:///c:/Users/Omid/X/Code/autotheme/src/core/utils.js#L23)
+- **Problem:**
+  - `isValidDate` string length check allows unhyphenated numeric dates like `20271031` through to `exactRecurring`.
+  - `parseDate()` returns `NaN` values for non-numeric date components without error.
+  - `parseTime()` accepts partial strings like `"10:20pm"`, `"12px"`, and `-0:30`.
+- **Action Plan:**
+  - [ ] Validate date formats strictly with regex: `/^(\d{4}-)?(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/`.
+  - [ ] Validate time strings strictly with regex: `/^([01]?\d|2[0-3]):([0-5]\d)$/` and integers `0–23`.
+  - [ ] Validate `day` against allowed strings and integers `0–6`.
 
-Build script prepends a duplicate 'use client'; directive
+---
 
-Exact Lines: src/react/useAutoTheme.js:1 and package.json:28.
-Problem: src/react/useAutoTheme.js already has "use client"; on line 1, and the build script prepends 'use client';\n again to dist/react/useAutoTheme.js and dist/react/useAutoTheme.cjs.
+### [ ] T11: Support Mixed-Format `since`/`until` Ranges (`YYYY-MM-DD` + `MM-DD`)
+- **Files:** [`src/core/utils.js:131-142`](file:///c:/Users/Omid/X/Code/autotheme/src/core/utils.js#L131-L142)
+- **Problem:** `isInDateRange()` requires both endpoints to have a year; if one has a year and the other does not, it silently ignores the year and evaluates as recurring annual.
+- **Action Plan:**
+  - [ ] If one endpoint provides a year and the other does not, either infer current year or emit a clear warning during `compile()`.
 
-auto() 3rd parameter (now?: Date) is missing from TypeScript declarations
+---
 
-Exact Lines: src/types/index.d.ts:160-163 vs. src/core/engine.js:223 and README.md:302.
-Problem: README.md:302 documents passing an explicit now Date to auto(), which engine.js:223 supports, but index.d.ts:160-163 omits now?: Date.
-🟡 Missing Pieces, Dead Code & Documentation Mismatches
+### [ ] T12: Prevent Unhandled Crash in `useAutoTheme()` When `options` is `null`
+- **Files:** [`src/react/useAutoTheme.js:59-64`](file:///c:/Users/Omid/X/Code/autotheme/src/react/useAutoTheme.js#L59-L64)
+- **Problem:** `const { interval = 60000 } = options;` throws `TypeError` if a user calls `useAutoTheme(rules, fallback, null)`.
+- **Action Plan:**
+  - [ ] Safe default: `const { interval = 60000 } = options || {};`.
 
-Missing test coverage for useAutoTheme, applyClasses, observe, and autoVars
+---
 
-Exact Lines: src/react/useAutoTheme.js:1-140, src/adapters/dom.js:1-33, src/core/observer.js:69-135, src/adapters/css-vars.js:50-101.
-Problem: README.md:6 displays a 100% TEST COVERAGE badge, but useAutoTheme.js has zero tests, and observer.js (inline style objects, CSS vars in inline styles, selector lookup, stop() teardown, visibilitychange) and css-vars.js have only a single basic smoke test in tests/ssr-rendering.test.js:24-63.
+## 🟡 P2 — Medium (Build, Packaging & TypeScript Definitions)
 
-day rule feature is completely undocumented in README.md and missing from warning text
+### [ ] T13: Separate Root and React Entry Point Type Declarations in `dist/`
+- **Files:** [`package.json:28`](file:///c:/Users/Omid/X/Code/autotheme/package.json#L28), [`src/types/index.d.ts`](file:///c:/Users/Omid/X/Code/autotheme/src/types/index.d.ts)
+- **Problem:** Copying a single `.d.ts` file to both `dist/index.d.ts` and `dist/react/useAutoTheme.d.ts` misleads TypeScript consumers about available exports on each submodule.
+- **Action Plan:**
+  - [ ] Create dedicated `src/types/react.d.ts` exporting only `useAutoTheme` and related types.
+  - [ ] Export core functions from `src/types/index.d.ts` without `useAutoTheme`.
+  - [ ] Update build script to copy appropriate declaration to respective dist paths.
 
-Exact Lines: README.md:79-95 and src/core/engine.js:204.
-Problem: Day-of-week rules (day: 'friday' | [0, 6]) are implemented in engine.js and utils.js, but missing from the Rule Object Shape table (README.md:79-88), the Priority Resolution diagram (README.md:89-95), and the invalid-rule warning in src/core/engine.js:204.
+---
 
-Unused imports and dead isSsr() function
+### [ ] T14: Remove Redundant `'use client';` Injection from Build Script
+- **Files:** [`package.json:28`](file:///c:/Users/Omid/X/Code/autotheme/package.json#L28), [`src/react/useAutoTheme.js:1`](file:///c:/Users/Omid/X/Code/autotheme/src/react/useAutoTheme.js#L1)
+- **Problem:** `src/react/useAutoTheme.js` already contains `"use client";`. The `package.json` build script prepends a duplicate directive to the compiled bundle.
+- **Action Plan:**
+  - [ ] Simplify build script to avoid duplicate prepending when already present.
 
-Exact Lines:
-src/core/engine.js:9-16: isExactDateMatch, isInDateRange, getMatchingTimeRule, and isDayMatch are unused imports.
-src/adapters/css-vars.js:9-14: isExactDateMatch and getMatchingTimeRule are unused imports.
-src/core/utils.js:12-14: isSsr() is unused across src/, and its test in tests/utils.test.js:146-149 says it('returns false...') while asserting true.
+---
 
-Stale documentation & badges in README.md and corrupted characters in tests/bugfix.test.js
+### [ ] T15: Add `now?: Date` Parameter to `auto()` TypeScript Declaration
+- **Files:** [`src/types/index.d.ts:160-163`](file:///c:/Users/Omid/X/Code/autotheme/src/types/index.d.ts#L160-L163), [`src/core/engine.js:223`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js#L223)
+- **Problem:** `auto(rules, fallback, now)` accepts an explicit `now` `Date` for SSR and testing, but the parameter is omitted from TypeScript declarations.
+- **Action Plan:**
+  - [ ] Update declaration: `export declare function auto<T>(cssEntryArray: AutoRule<T>[] | CompiledRules<T>, fallback?: T, now?: Date): T;`.
 
-Exact Lines:
-README.md:1: Hard-codes version 1.6.4 in the Socket badge URL.
-README.md:244-246: Claims useAutoTheme uses JSON.stringify under the hood, whereas src/react/useAutoTheme.js:38-57 uses recursive isEqual.
-README.md:358: States "Contribution guidelines will be published with the v1.0 stable release".
-tests/bugfix.test.js:262 & tests/bugfix.test.js:288: Contains corrupted UTF-8 replacement characters (``).
+---
 
-Leftover scratch and temporary files in the repository
+## 🟢 P3 — Low (Testing, Documentation & Clean-Up)
 
-Exact Lines: test.ts:1, scratch/fix_test.cjs:1-26, .todo:1-195, and .npmignore:1-9 (redundant with "files": ["dist"] in package.json:24-26 and has a typo ReadME on line 9).
-🟢 Enhancements for v1.8
+### [ ] T16: Add Comprehensive Unit Tests for Untested Modules
+- **Files:** [`tests/useAutoTheme.test.js`](file:///c:/Users/Omid/X/Code/autotheme/tests), [`tests/observer.test.js`](file:///c:/Users/Omid/X/Code/autotheme/tests), [`tests/css-vars.test.js`](file:///c:/Users/Omid/X/Code/autotheme/tests)
+- **Problem:** `useAutoTheme`, `applyClasses`, `observe`, and `autoVars` have zero or minimal unit test coverage.
+- **Action Plan:**
+  - [ ] Add unit test suite for `useAutoTheme` hook (mounting, boundary ticking, pre-compiled rule sets).
+  - [ ] Add unit test suite for `observe()` (classes, inline style objects, teardown).
+  - [ ] Add unit test suite for `autoVars()` (property injection, cleanup, options parsing).
 
-Avoid redundant DOM mutations on every tick in autoVars()
+---
 
-Exact Lines: src/adapters/css-vars.js:50-65.
-Enhancement: Track previousVars (similar to previousStyle in src/core/observer.js:57-66) so tick() skips removing and re-setting all CSS custom properties every 60 seconds when the active rule has not changed.
+### [ ] T17: Document `day` Rule in `README.md` and Include in Warning Message
+- **Files:** [`README.md:79-95`](file:///c:/Users/Omid/X/Code/autotheme/README.md#L79-L95), [`src/core/engine.js:204`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js#L204)
+- **Problem:** Day-of-week theming is fully supported in engine code but omitted from documentation tables, priority charts, and engine warning text.
+- **Action Plan:**
+  - [ ] Add `day` row and example to `README.md` Rule Object Shape table.
+  - [ ] Add `Day of Week` to priority resolution diagram.
+  - [ ] Update warning text in `src/core/engine.js:204` to mention `day`.
 
-Pre-parse date, since, until, and day in compile()
+---
 
-Exact Lines: src/core/engine.js:95-100 and src/core/utils.js:70-151.
-Enhancement: compile() currently pre-computes \_minutes, but parseDate() (split('-') + parseInt) and DAY_MAP string lowercasing still run on every auto() call. Pre-computing \_date, \_since, \_until, and \_days inside compile() makes runtime evaluation zero-allocation and validates all fields once up front.
+### [ ] T18: Remove Unused Imports and Dead `isSsr()` Utility
+- **Files:** [`src/core/engine.js:9-16`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js#L9-L16), [`src/adapters/css-vars.js:9-14`](file:///c:/Users/Omid/X/Code/autotheme/src/adapters/css-vars.js#L9-L14), [`src/core/utils.js:12-14`](file:///c:/Users/Omid/X/Code/autotheme/src/core/utils.js#L12-L14)
+- **Problem:** Multiple unused functions are imported in `engine.js` and `css-vars.js`. `isSsr()` is unused in library code.
+- **Action Plan:**
+  - [ ] Clean up unused imports.
+  - [ ] Remove dead `isSsr()` helper and clean up test file.
 
-Support CSS selector strings for target in autoVars()
+---
 
-Exact Lines: src/adapters/css-vars.js:46 vs. src/core/observer.js:47-49.
-Enhancement: Allow target in autoVars(rules, '#app') to accept a CSS selector string just like observe() does.
+### [ ] T19: Update Stale README Badges/Docs and Fix Corrupted Test UTF-8
+- **Files:** [`README.md:1, 244-246, 358`](file:///c:/Users/Omid/X/Code/autotheme/README.md#L1), [`tests/bugfix.test.js:262, 288`](file:///c:/Users/Omid/X/Code/autotheme/tests/bugfix.test.js#L262)
+- **Problem:** Socket badge references old `1.6.4`; README mentions `JSON.stringify` instead of `isEqual`; `bugfix.test.js` contains corrupted comment characters.
+- **Action Plan:**
+  - [ ] Update Socket badge to current release.
+  - [ ] Reconcile `isEqual` description in `README.md`.
+  - [ ] Fix UTF-8 encoding in `tests/bugfix.test.js`.
 
-Add TypeScript type-checking to CI
+---
 
-Exact Lines: .github/workflows/ci.yml:27-31 and package.json:27-31.
-Enhancement: Add tsc --noEmit to npm test / ci.yml so broken .d.ts declarations cannot slip into a release
+### [ ] T20: Remove Scratch Files and Clean `.npmignore`
+- **Files:** [`test.ts`](file:///c:/Users/Omid/X/Code/autotheme/test.ts), [`scratch/fix_test.cjs`](file:///c:/Users/Omid/X/Code/autotheme/scratch/fix_test.cjs), [`.npmignore`](file:///c:/Users/Omid/X/Code/autotheme/.npmignore)
+- **Problem:** Leftover debug files clutter workspace. `.npmignore` is redundant with `"files": ["dist"]` in `package.json` and has typos.
+- **Action Plan:**
+  - [ ] Remove `test.ts` and `scratch/`.
+  - [ ] Clean `.npmignore`.
+
+---
+
+## 🔵 P4 — Enhancements (High-Leverage v1.8 Upgrades)
+
+### [ ] T21: Skip Redundant DOM Writes in `autoVars()`
+- **Files:** [`src/adapters/css-vars.js:50-65`](file:///c:/Users/Omid/X/Code/autotheme/src/adapters/css-vars.js#L50-L65)
+- **Problem:** `autoVars()` removes and re-sets all custom properties on every 60-second tick even if the matched rule has not changed.
+- **Action Plan:**
+  - [ ] Track `previousMatched` rule.
+  - [ ] Only mutate DOM when matched rule changes.
+
+---
+
+### [ ] T22: Pre-Parse Date, Range, and Day Strings During `compile()`
+- **Files:** [`src/core/engine.js:95-100`](file:///c:/Users/Omid/X/Code/autotheme/src/core/engine.js#L95-L100), [`src/core/utils.js:70-151`](file:///c:/Users/Omid/X/Code/autotheme/src/core/utils.js#L70-L151)
+- **Problem:** Date parsing and day-of-week string lowercasing occur dynamically on every single `auto()` call.
+- **Action Plan:**
+  - [ ] Pre-parse `_date`, `_since`, `_until`, and `_days` numeric values during `compile()`.
+  - [ ] Make `resolveRule()` zero-allocation at runtime.
+
+---
+
+### [ ] T23: Support CSS Selector Strings for `target` in `autoVars()`
+- **Files:** [`src/adapters/css-vars.js:46`](file:///c:/Users/Omid/X/Code/autotheme/src/adapters/css-vars.js#L46)
+- **Problem:** `observe()` allows passing a selector string (`'#app'`), while `autoVars()` requires an `HTMLElement`.
+- **Action Plan:**
+  - [ ] Resolve `typeof target === 'string' ? document.querySelector(target) : target`.
+
+---
+
+### [ ] T24: Add TypeScript Type-Checking to CI Workflow
+- **Files:** [`package.json:29`](file:///c:/Users/Omid/X/Code/autotheme/package.json#L29), [`.github/workflows/ci.yml:27-31`](file:///c:/Users/Omid/X/Code/autotheme/.github/workflows/ci.yml#L27-L31)
+- **Problem:** CI runs tests and build but never checks `.d.ts` validity with `tsc --noEmit`.
+- **Action Plan:**
+  - [ ] Add `npm run typecheck` (`tsc --noEmit`) to `test` script and CI steps.
