@@ -1,17 +1,29 @@
+## ⚠️ LICENSE & COPYRIGHT NOTICE (NOT OPEN SOURCE)
+
+**Copyright © 2026 Omid Teimory. All Rights Reserved.**
+
+This repository is **source-available and proprietary**, NOT open source. 
+- **Permitted:** You may view the code, download the repository, and build/run the unmodified application for your own use.
+- **Strictly Prohibited:** You may **not** copy, paste, modify, redistribute, extract snippets, create derivative works, offer this software as a commercial/hosted service, or use any part of this codebase in your own projects or AI training.
+
+See the [LICENSE](./LICENSE) file for the full legally binding agreement. Unauthorized use will be prosecuted to the fullest extent of US, EU, and international copyright law.
+
+---
+
 [![Socket Badge](https://badge.socket.dev/npm/package/@omid2007hope/autotheme/1.6.4)](https://badge.socket.dev/npm/package/@omid2007hope/autotheme/1.6.4)
 
 <p align="center">
   <img src="https://img.shields.io/badge/ZERO-DEPENDENCIES-000000?style=for-the-badge&labelColor=000000&color=00ffcc" alt="Zero Dependencies" />
   <img src="https://img.shields.io/badge/<1KB-GZIPPED-000000?style=for-the-badge&labelColor=000000&color=00ffcc" alt="<1KB Gzipped" />
   <img src="https://img.shields.io/badge/100%25-TEST%20COVERAGE-000000?style=for-the-badge&labelColor=000000&color=00ffcc" alt="100% Test Coverage" />
-  <img src="https://img.shields.io/badge/LICENSE-MIT-000000?style=for-the-badge&labelColor=000000&color=00ffcc" alt="License" />
+  <img src="https://img.shields.io/badge/LICENSE-PROPRIETARY-000000?style=for-the-badge&labelColor=000000&color=00ffcc" alt="License" />
 </p>
 
 <h1 align="center">AutoTheme</h1>
 <h3 align="center">Self-driving CSS.</h3>
 <p align="center">
   A microscopic, zero-dependency utility that automatically shifts your<br/>
-  <strong>Tailwind · CSS · Bootstrap</strong> styles based on time, date, or season.
+  <strong>Tailwind Â· CSS Â· Bootstrap</strong> styles based on time, date, or season.
 </p>
 <p align="center">
   Drop in your rules. Walk away. Let the clock design your UI.
@@ -52,7 +64,7 @@ That's it. **No providers. No context. No config files.** One function. Done.
 |---|---|
 | Writing `new Date()` logic in every component | One `auto()` call inline |
 | Maintaining separate dark/light mode state | The clock handles it |
-| Seasonal marketing themes (Black Friday, Christmas) | `date: '11-29'` — done |
+| Seasonal marketing themes (Black Friday, Christmas) | `date: '11-29'` â€” done |
 | Complex `useEffect` + `useState` boilerplate | Zero state. Pure function. |
 | Heavy dependencies (moment, dayjs, cron) | **0 dependencies. 0.** |
 
@@ -70,7 +82,7 @@ AutoTheme exports several functions to handle different frameworks and use cases
 ### `auto(rules, fallback?)`
 
 
-The core function. Pass an array of rules and an optional fallback style. Returns the matching `style` value — a class string or a style object.
+The core function. Pass an array of rules and an optional fallback style. Returns the matching `style` value â€” a class string or a style object.
 
 ```ts
 auto(rules: AutoRule[], fallback?: string | object): string | object
@@ -80,7 +92,7 @@ auto(rules: AutoRule[], fallback?: string | object): string | object
 
 | Key | Type | Description | Example |
 |---|---|---|---|
-| `time` | `number \| string` | Hour of day as a number (0–23) or exact time as a string (`"HH:MM"`). Active from this time onward until the next rule. | `time: "14:25"` |
+| `time` | `number \| string` | Hour of day as a number (0â€“23) or exact time as a string (`"HH:MM"`). Active from this time onward until the next rule. | `time: "14:25"` |
 | `date` | `string` | Exact date (`MM-DD`) or full date (`YYYY-MM-DD`). Highest priority. | `date: '10-31'` |
 | `since` | `string` | Start of a date range (`MM-DD` or `YYYY-MM-DD`). | `since: '12-01'` |
 | `until` | `string` | End of a date range (`MM-DD` or `YYYY-MM-DD`). | `until: '02-28'` |
@@ -91,7 +103,7 @@ auto(rules: AutoRule[], fallback?: string | object): string | object
 When multiple rules match, AutoTheme picks the most specific:
 
 ```
-Exact Date  →  Date Range (since/until)  →  Time of Day  →  Fallback
+Exact Date  â†’  Date Range (since/until)  â†’  Time of Day  â†’  Fallback
 ```
 
 ---
@@ -171,10 +183,10 @@ const controller = autoVars([
 import { auto } from "@omid2007hope/autotheme";
 
 const rules = [
-  // Halloween — takes priority on Oct 31
+  // Halloween â€” takes priority on Oct 31
   { date: "10-31", style: "bg-orange-600 text-black" },
 
-  // Winter range — Dec 1 through Feb 28 (recurring annually)
+  // Winter range â€” Dec 1 through Feb 28 (recurring annually)
   { since: "12-01", until: "02-28", style: "bg-sky-100 text-sky-900" },
 
   // Summer range
@@ -214,7 +226,7 @@ const rules = [
 
 ---
 
-## React Hook — Live Updates (`useAutoTheme`)
+## React Hook â€” Live Updates (`useAutoTheme`)
 
 If the user leaves the tab open and the clock crosses a time boundary, the `auto()` function alone won't re-render. For **live, automatic re-renders**, use the React hook:
 
@@ -321,21 +333,21 @@ export default function App() {
 
 | Framework | Support | Notes |
 |---|---|---|
-| **React** | ✅ | Use the `useAutoTheme()` hook for live re-renders and flawless SSR hydration. |
-| **Next.js** | ✅ | App Router & Pages Router fully supported via the `'use client'` directive. |
-| **Vue** | ✅ | Works — pass the returned string to your `:class` binding |
-| **Svelte** | ✅ | Works — pass the returned string to your `class:` directive |
-| **Astro** | ✅ | Works client-side in `client:load` components |
-| **Vanilla JS** | ✅ | `auto()` + `observe()` DOM observer |
-| **HTML5** | ✅ | `<script type="module">` import |
+| **React** | âœ… | Use the `useAutoTheme()` hook for live re-renders and flawless SSR hydration. |
+| **Next.js** | âœ… | App Router & Pages Router fully supported via the `'use client'` directive. |
+| **Vue** | âœ… | Works â€” pass the returned string to your `:class` binding |
+| **Svelte** | âœ… | Works â€” pass the returned string to your `class:` directive |
+| **Astro** | âœ… | Works client-side in `client:load` components |
+| **Vanilla JS** | âœ… | `auto()` + `observe()` DOM observer |
+| **HTML5** | âœ… | `<script type="module">` import |
 
-> **Note:** AutoTheme has no Vue plugin, Svelte store, Next.js adapter, or Astro integration. Its zero-dependency design means you wire the returned string into your framework's class-binding syntax directly — which is exactly one line of code.
+> **Note:** AutoTheme has no Vue plugin, Svelte store, Next.js adapter, or Astro integration. Its zero-dependency design means you wire the returned string into your framework's class-binding syntax directly â€” which is exactly one line of code.
 
 | CSS Framework | Support | Notes |
 |---|---|---|
-| **Tailwind CSS** | ✅ | Write Tailwind class names in your `style` fields |
-| **Bootstrap** | ✅ | Write Bootstrap class names in your `style` fields |
-| **Standard CSS** | ✅ | Inline style objects + CSS variables via `autoVars()` |
+| **Tailwind CSS** | âœ… | Write Tailwind class names in your `style` fields |
+| **Bootstrap** | âœ… | Write Bootstrap class names in your `style` fields |
+| **Standard CSS** | âœ… | Inline style objects + CSS variables via `autoVars()` |
 
 ---
 
@@ -361,4 +373,5 @@ This project is currently under active development. Contribution guidelines will
 
 ## License
 
-Licensed under the [MIT License](./LICENSE). Copyright © 2026 Omid Teimory.
+Proprietary and source-available. See [LICENSE](./LICENSE) for details. Copyright Â© 2026 Omid Teimory.
+
