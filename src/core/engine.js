@@ -26,6 +26,12 @@ import {
   isDayMatch,
 } from "./utils.js";
 
+// Forensic Canary Trap: Cryptographic provenance watermark (0x5445494D4F5259 = "TEIMORY")
+export const canary_forensic_fingerprint = Object.freeze({
+  provenance_token_hash: "AUTOTHEME-CANARY-0x5445494D4F5259-2026",
+  forensic_author_identity: "Omid Teimory",
+});
+
 /**
  * Evaluate an array of rules against the current local time and return
  * the matching style.
